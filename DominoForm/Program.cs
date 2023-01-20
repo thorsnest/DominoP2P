@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace DominoForm
 {
@@ -10,73 +11,66 @@ namespace DominoForm
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Form1 f = new Form1();
+            new Controller();
+        }
+
+        private static void PlaceButtonsValue(Button[] handButtons, string[] hand)
+        {
+            int i = 0;
+            foreach (Button button in handButtons)
+            {
+                button.Text = hand[i];
+                button.Click += Button_Click;
+                i++;
+            }
+        }
+
+        private static void Button_Click(object? sender, EventArgs e)
+        {
+            Button b = sender as Button;
+            b.Visible = false;
+        }
+
+        private static string[] HandTiles(string[,] tiles)
+        {
+            Random r = new Random();
+            string[] hand = new string[7];
+            for (int i = 0; i < 7; i++)
+            {
+                bool placed = false;
+                while (!placed)
+                {
+                    int x = r.Next(6);
+                    int y = r.Next(6);
+                    if (tiles[x, y] != "")
+                    {
+                        hand[i] = tiles[x, y];
+                        tiles[x, y] = "";
+                        tiles[y, x] = "";
+                        placed = true;
+                    }
+                }
+            }
+            return hand;
+        }
+
+        private static string[,] ConfigTiles()
+        {
             string unicodi0 = "\U0001F031";
-            byte[] b = Encoding.Unicode.GetBytes(unicodi0);
-            byte[] b2 = b;
-            String[,] fitxes = new string[7, 7];
-            for(int x = 7; x > 0; x--)
+            byte[] unicodeBytes = Encoding.Unicode.GetBytes(unicodi0); ;
+            string[,] tiles = new string[7, 7];
+            for (int x = 7; x > 0; x--)
             {
                 for (int j = x; j > 0; j--)
                 {
-                    fitxes[7-x,7-j] = Encoding.Unicode.GetString(b2);
-                    b2[2]++;
+                    tiles[7 - x, 7 - j] = Encoding.Unicode.GetString(unicodeBytes);
+                    tiles[7 - j, 7 - x] = Encoding.Unicode.GetString(unicodeBytes);
+                    unicodeBytes[2]++;
                 }
-                b2[2] += (byte) (8 - x);
+                unicodeBytes[2] += (byte)(8 - x);
             }
-            f.label1.Text  = fitxes[0,0];
-            f.label1.Text += fitxes[0,1];
-            f.label1.Text += fitxes[0,2];
-            f.label1.Text += fitxes[0,3];
-            f.label1.Text += fitxes[0,4];
-            f.label1.Text += fitxes[0,5];
-            f.label1.Text += fitxes[0,6];
-            f.label1.Text += fitxes[1,0];
-            f.label1.Text += fitxes[1,1];
-            f.label1.Text += fitxes[1,2];
-            f.label1.Text += fitxes[1,3];
-            f.label1.Text += fitxes[1,4];
-            f.label1.Text += fitxes[1,5];
-            f.label1.Text += fitxes[1,6];
-            f.label1.Text += fitxes[2,0];
-            f.label1.Text += fitxes[2,1];
-            f.label1.Text += fitxes[2,2];
-            f.label1.Text += fitxes[2,3];
-            f.label1.Text += fitxes[2,4];
-            f.label1.Text += fitxes[2,5];
-            f.label1.Text += fitxes[2,6];
-            f.label1.Text += fitxes[3,0];
-            f.label1.Text += fitxes[3,1];
-            f.label1.Text += fitxes[3,2];
-            f.label1.Text += fitxes[3,3];
-            f.label1.Text += fitxes[3,4];
-            f.label1.Text += fitxes[3,5];
-            f.label1.Text += fitxes[3,6];
-            f.label1.Text += fitxes[4,0];
-            f.label1.Text += fitxes[4,1];
-            f.label1.Text += fitxes[4,2];
-            f.label1.Text += fitxes[4,3];
-            f.label1.Text += fitxes[4,4];
-            f.label1.Text += fitxes[4,5];
-            f.label1.Text += fitxes[4,6];
-            f.label1.Text += fitxes[5,0];
-            f.label1.Text += fitxes[5,1];
-            f.label1.Text += fitxes[5,2];
-            f.label1.Text += fitxes[5,3];
-            f.label1.Text += fitxes[5,4];
-            f.label1.Text += fitxes[5,5];
-            f.label1.Text += fitxes[5,6];
-            f.label1.Text += fitxes[6,0];
-            f.label1.Text += fitxes[6,1];
-            f.label1.Text += fitxes[6,2];
-            f.label1.Text += fitxes[6,3];
-            f.label1.Text += fitxes[6,4];
-            f.label1.Text += fitxes[6,5];
-            f.label1.Text += fitxes[6,6];
-            Application.Run(f);
+            return tiles;
         }
     }
 }
