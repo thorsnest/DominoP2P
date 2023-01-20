@@ -8,36 +8,68 @@ namespace DominoForm
 {
     internal class Controller
     {
-        Form1 f;
-        string[,] tiles;
-        string[] hand;
-        Button[] handButtons;
-        int leftTile;
-        int rightTile;
+        Form1 f;                //El tablero
+        string[,] tiles;        //La lista con todas las fichas del juego
+        Button[] hand;          //La mano del jugador
+        int leftTile;           //El valor aceptado del lado izquierdo del tablero
+        int rightTile;          //El valor aceptado del lado derecho del tablero
         public Controller()
         {
             f = new Form1();
-            tiles = ConfigTiles();
-            hand = HandTiles(tiles);
-            tiles = ConfigTiles();
-            leftTile = 6;
-            rightTile = 6;
-            handButtons = f.Controls.OfType<Button>().ToArray();
-            PlaceButtonsValue(handButtons, hand);
-            EnableHand();
-            f.tauler.Text = tiles[6, 6];
+            Config();
+            f.tauler.Text = tiles[0, 0];
             Application.Run(f);
         }
 
-        private void PlaceButtonsValue(Button[] handButtons, string[] hand)
+        private void Config()
         {
-            int i = 0;
-            foreach (Button button in handButtons)
+            tiles = ConfigTiles();
+            ConfigButtons();
+            hand = f.Controls.OfType<Button>().ToArray();
+            EnableHand();
+        }
+
+        private static string[,] ConfigTiles()
+        {
+            string unicodi0 = "\U0001F031";
+            byte[] unicodeBytes = Encoding.Unicode.GetBytes(unicodi0); ;
+            string[,] tiles = new string[7, 7];
+            for (int x = 7; x > 0; x--)
             {
-                button.Text = hand[i];
-                button.MouseDown += Button_MouseDown;
-                i++;
+                for (int j = x; j > 0; j--)
+                {
+                    tiles[7 - x, 7 - j] = Encoding.Unicode.GetString(unicodeBytes);
+                    tiles[7 - j, 7 - x] = Encoding.Unicode.GetString(unicodeBytes);
+                    unicodeBytes[2]++;
+                }
+                unicodeBytes[2] += (byte)(8 - x);
             }
+            return tiles;
+        }
+        private void ConfigButtons()
+        {
+            string[,] tempTiles = ConfigTiles();
+            Random r = new Random();
+            string[] hand = new string[7];
+            foreach (Button button in this.hand)
+            {
+                button.MouseDown += Button_MouseDown;
+
+                bool placed = false;
+                while (!placed)
+                {
+                    int x = r.Next(7);
+                    int y = r.Next(7);
+                    if (tempTiles[x, y] != "")
+                    {
+                        button.Text = tempTiles[x, y];
+                        tempTiles[x, y] = "";
+                        tempTiles[y, x] = "";
+                        placed = true;
+                    }
+                }
+            }
+            return hand;
         }
 
         private void Button_MouseDown(object? sender, MouseEventArgs e)
@@ -61,7 +93,9 @@ namespace DominoForm
                         button.Visible = false;
                         break;
                     }
-            }else{
+            }
+            else
+            {
                 for (int i = 0; i < 7; i++)
                     if (tiles[rightTile, i].Equals(button.Text))
                     {
@@ -75,7 +109,7 @@ namespace DominoForm
 
         private void EnableHand()
         {
-            foreach (Button button in handButtons)
+            foreach (Button button in hand)
             {
                 button.Enabled = CheckPlaceableTile(button);
             }
@@ -94,45 +128,5 @@ namespace DominoForm
             return false;
         }
 
-        private static string[] HandTiles(string[,] tiles)
-        {
-            Random r = new Random();
-            string[] hand = new string[7];
-            for (int i = 0; i < 7; i++)
-            {
-                bool placed = false;
-                while (!placed)
-                {
-                    int x = r.Next(7);
-                    int y = r.Next(7);
-                    if (tiles[x, y] != "")
-                    {
-                        hand[i] = tiles[x, y];
-                        tiles[x, y] = "";
-                        tiles[y, x] = "";
-                        placed = true;
-                    }
-                }
-            }
-            return hand;
-        }
-
-        private static string[,] ConfigTiles()
-        {
-            string unicodi0 = "\U0001F031";
-            byte[] unicodeBytes = Encoding.Unicode.GetBytes(unicodi0); ;
-            string[,] tiles = new string[7, 7];
-            for (int x = 7; x > 0; x--)
-            {
-                for (int j = x; j > 0; j--)
-                {
-                    tiles[7 - x, 7 - j] = Encoding.Unicode.GetString(unicodeBytes);
-                    tiles[7 - j, 7 - x] = Encoding.Unicode.GetString(unicodeBytes);
-                    unicodeBytes[2]++;
-                }
-                unicodeBytes[2] += (byte)(8 - x);
-            }
-            return tiles;
-        }
     }
 }
