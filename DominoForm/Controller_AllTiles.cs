@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace DominoForm
 {
-    internal class Controller
+    internal class Controller_AllTiles
     {
         Form1 f;                //El tablero
         string[,] tiles;        //La lista con todas las fichas del juego
         Button[] hand;          //La mano del jugador
         int leftTile;           //El valor aceptado del lado izquierdo del tablero
         int rightTile;          //El valor aceptado del lado derecho del tablero
-        public Controller()
+        public Controller_AllTiles()
         {
             f = new Form1();
             Config();
@@ -39,16 +39,15 @@ namespace DominoForm
             string[,] tiles = new string[7, 7];
             for (int x = 7; x > 0; x--)
             {
-                for (int j = x; j > 0; j--)
+                for (int j = 7; j > 0; j--)
                 {
                     tiles[7 - x, 7 - j] = Encoding.Unicode.GetString(unicodeBytes);
-                    tiles[7 - j, 7 - x] = Encoding.Unicode.GetString(unicodeBytes);
                     unicodeBytes[2]++;
                 }
-                unicodeBytes[2] += (byte)(8 - x);
             }
             return tiles;
         }
+        
         //Configura els 7 botons donan-lis a cadascún una caràcter de fitxa aleatori i el treu de l'array.
         private void ConfigButtons()
         {
@@ -91,7 +90,14 @@ namespace DominoForm
                 for (int i = 0; i < 7; i++)
                     if (tiles[leftTile, i].Equals(button.Text))
                     {
-                        f.tauler.Text = button.Text + f.tauler.Text;
+                        f.tauler.Text = tiles[i, leftTile] + f.tauler.Text;
+                        leftTile = i;
+                        button.Visible = false;
+                        break;
+                    }
+                    else if (tiles[i, leftTile].Equals(button.Text))
+                    {
+                        f.tauler.Text = tiles[i, leftTile] + f.tauler.Text;
                         leftTile = i;
                         button.Visible = false;
                         break;
@@ -102,7 +108,14 @@ namespace DominoForm
                 for (int i = 0; i < 7; i++)
                     if (tiles[rightTile, i].Equals(button.Text))
                     {
-                        f.tauler.Text += button.Text;
+                        f.tauler.Text += tiles[rightTile, i];
+                        rightTile = i;
+                        button.Visible = false;
+                        break;
+                    }
+                    else if (tiles[i, rightTile].Equals(button.Text))
+                    {
+                        f.tauler.Text += tiles[rightTile, i];
                         rightTile = i;
                         button.Visible = false;
                         break;
@@ -123,7 +136,9 @@ namespace DominoForm
             for (int i = 0; i < 7; i++)
             {
                 if (tiles[rightTile, i].Equals(button.Text) ||
-                    tiles[leftTile, i].Equals(button.Text))
+                    tiles[leftTile, i].Equals(button.Text)  ||
+                    tiles[i, rightTile].Equals(button.Text) ||
+                    tiles[i, leftTile].Equals(button.Text))
                 {
                     return true;
                 }
