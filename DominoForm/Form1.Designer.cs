@@ -41,7 +41,7 @@
             // tauler
             // 
             this.tauler.AutoSize = true;
-            this.tauler.Font = new System.Drawing.Font("Segoe UI", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.tauler.Font = new System.Drawing.Font("Segoe UI", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.tauler.Location = new System.Drawing.Point(2, 70);
             this.tauler.MinimumSize = new System.Drawing.Size(796, 245);
             this.tauler.Name = "tauler";
@@ -51,73 +51,94 @@
             // 
             // tile1_B
             // 
-            this.tile1_B.Font = new System.Drawing.Font("Segoe UI", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile1_B.Location = new System.Drawing.Point(10, 342);
+            this.tile1_B.BackColor = System.Drawing.SystemColors.Control;
+            this.tile1_B.FlatAppearance.BorderSize = 0;
+            this.tile1_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tile1_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.tile1_B.Location = new System.Drawing.Point(23, 334);
             this.tile1_B.Name = "tile1_B";
-            this.tile1_B.Size = new System.Drawing.Size(106, 96);
+            this.tile1_B.Size = new System.Drawing.Size(93, 104);
             this.tile1_B.TabIndex = 1;
-            this.tile1_B.Text = ".";
-            this.tile1_B.UseVisualStyleBackColor = true;
+            this.tile1_B.Text = "🀱";
+            this.tile1_B.UseVisualStyleBackColor = false;
             // 
             // tile2_B
             // 
-            this.tile2_B.Font = new System.Drawing.Font("Segoe UI", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile2_B.Location = new System.Drawing.Point(122, 342);
+            this.tile2_B.BackColor = System.Drawing.SystemColors.Control;
+            this.tile2_B.FlatAppearance.BorderSize = 0;
+            this.tile2_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tile2_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.tile2_B.Location = new System.Drawing.Point(135, 334);
             this.tile2_B.Name = "tile2_B";
-            this.tile2_B.Size = new System.Drawing.Size(106, 96);
+            this.tile2_B.Size = new System.Drawing.Size(93, 104);
             this.tile2_B.TabIndex = 2;
-            this.tile2_B.Text = ".";
-            this.tile2_B.UseVisualStyleBackColor = true;
+            this.tile2_B.Text = "🀱";
+            this.tile2_B.UseVisualStyleBackColor = false;
             // 
             // tile4_B
             // 
-            this.tile4_B.Font = new System.Drawing.Font("Segoe UI", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile4_B.Location = new System.Drawing.Point(346, 342);
+            this.tile4_B.BackColor = System.Drawing.SystemColors.Control;
+            this.tile4_B.FlatAppearance.BorderSize = 0;
+            this.tile4_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tile4_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.tile4_B.Location = new System.Drawing.Point(359, 334);
             this.tile4_B.Name = "tile4_B";
-            this.tile4_B.Size = new System.Drawing.Size(106, 96);
+            this.tile4_B.Size = new System.Drawing.Size(93, 104);
             this.tile4_B.TabIndex = 4;
-            this.tile4_B.Text = ".";
-            this.tile4_B.UseVisualStyleBackColor = true;
+            this.tile4_B.Text = "🀱";
+            this.tile4_B.UseVisualStyleBackColor = false;
             // 
             // tile3_B
             // 
-            this.tile3_B.Font = new System.Drawing.Font("Segoe UI", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile3_B.Location = new System.Drawing.Point(234, 342);
+            this.tile3_B.BackColor = System.Drawing.SystemColors.Control;
+            this.tile3_B.FlatAppearance.BorderSize = 0;
+            this.tile3_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tile3_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.tile3_B.Location = new System.Drawing.Point(247, 334);
             this.tile3_B.Name = "tile3_B";
-            this.tile3_B.Size = new System.Drawing.Size(106, 96);
+            this.tile3_B.Size = new System.Drawing.Size(93, 104);
             this.tile3_B.TabIndex = 3;
-            this.tile3_B.Text = ".";
-            this.tile3_B.UseVisualStyleBackColor = true;
+            this.tile3_B.Text = "🀱";
+            this.tile3_B.UseVisualStyleBackColor = false;
             // 
             // tile7_B
             // 
-            this.tile7_B.Font = new System.Drawing.Font("Segoe UI", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile7_B.Location = new System.Drawing.Point(682, 342);
+            this.tile7_B.BackColor = System.Drawing.SystemColors.Control;
+            this.tile7_B.FlatAppearance.BorderSize = 0;
+            this.tile7_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tile7_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.tile7_B.Location = new System.Drawing.Point(695, 334);
             this.tile7_B.Name = "tile7_B";
-            this.tile7_B.Size = new System.Drawing.Size(106, 96);
+            this.tile7_B.Size = new System.Drawing.Size(93, 104);
             this.tile7_B.TabIndex = 7;
-            this.tile7_B.Text = ".";
-            this.tile7_B.UseVisualStyleBackColor = true;
+            this.tile7_B.Text = "🀱";
+            this.tile7_B.UseVisualStyleBackColor = false;
             // 
             // tile6_B
             // 
-            this.tile6_B.Font = new System.Drawing.Font("Segoe UI", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile6_B.Location = new System.Drawing.Point(570, 342);
+            this.tile6_B.BackColor = System.Drawing.SystemColors.Control;
+            this.tile6_B.FlatAppearance.BorderSize = 0;
+            this.tile6_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tile6_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.tile6_B.Location = new System.Drawing.Point(583, 334);
             this.tile6_B.Name = "tile6_B";
-            this.tile6_B.Size = new System.Drawing.Size(106, 96);
+            this.tile6_B.Size = new System.Drawing.Size(93, 104);
             this.tile6_B.TabIndex = 6;
-            this.tile6_B.Text = ".";
-            this.tile6_B.UseVisualStyleBackColor = true;
+            this.tile6_B.Text = "🀱";
+            this.tile6_B.UseVisualStyleBackColor = false;
             // 
             // tile5_B
             // 
-            this.tile5_B.Font = new System.Drawing.Font("Segoe UI", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile5_B.Location = new System.Drawing.Point(458, 342);
+            this.tile5_B.BackColor = System.Drawing.SystemColors.Control;
+            this.tile5_B.FlatAppearance.BorderSize = 0;
+            this.tile5_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tile5_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.tile5_B.Location = new System.Drawing.Point(471, 334);
             this.tile5_B.Name = "tile5_B";
-            this.tile5_B.Size = new System.Drawing.Size(106, 96);
+            this.tile5_B.Size = new System.Drawing.Size(93, 104);
             this.tile5_B.TabIndex = 5;
-            this.tile5_B.Text = ".";
-            this.tile5_B.UseVisualStyleBackColor = true;
+            this.tile5_B.Text = "🀱";
+            this.tile5_B.UseVisualStyleBackColor = false;
             // 
             // Form1
             // 

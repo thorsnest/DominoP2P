@@ -53,7 +53,7 @@ namespace DominoForm
         private void ConfigButtons()
         {
             string[,] tempTiles = ConfigTiles();
-            Random r = new Random();
+            Random r = new();
             string[] hand = new string[7];
             foreach (Button button in this.hand)
             {
@@ -84,12 +84,12 @@ namespace DominoForm
             EnableHand();
         }
 
-        private void PlaceTile(Button button, bool left)
+        private void PlaceTile(Button? button, bool left)
         {
             if (left)
             {
                 for (int i = 0; i < 7; i++)
-                    if (tiles[leftTile, i].Equals(button.Text))
+                    if (tiles[leftTile, i].Equals(button?.Text))
                     {
                         f.tauler.Text = button.Text + f.tauler.Text;
                         leftTile = i;
@@ -100,7 +100,7 @@ namespace DominoForm
             else
             {
                 for (int i = 0; i < 7; i++)
-                    if (tiles[rightTile, i].Equals(button.Text))
+                    if (tiles[rightTile, i].Equals(button?.Text))
                     {
                         f.tauler.Text += button.Text;
                         rightTile = i;
