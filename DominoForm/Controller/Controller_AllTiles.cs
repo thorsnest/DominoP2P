@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DominoForm.View;
 
-namespace DominoForm
+namespace DominoForm.Controller
 {
     internal class Controller_AllTiles
     {
-        Form1 f;                //El tablero
+        Client f;                //El tablero
         string[,] tiles;        //La lista con todas las fichas del juego
         string[,] pile;        //La lista con todas las fichas del juego
         Button[] hand;          //La mano del jugador
@@ -16,7 +17,7 @@ namespace DominoForm
         int rightTile;          //El valor aceptado del lado derecho del tablero
         public Controller_AllTiles()
         {
-            f = new Form1();
+            f = new Client();
             Config();
             f.tauler.Text += tiles[leftTile, rightTile];
             Application.Run(f);
@@ -54,13 +55,13 @@ namespace DominoForm
             unicodeBytes[2]++;
             for (int x = 0; x < 7; x++)
             {
-                tiles[x,x] = Encoding.Unicode.GetString(unicodeBytes);
+                tiles[x, x] = Encoding.Unicode.GetString(unicodeBytes);
                 unicodeBytes[2] += 8;
             }
 
-                return tiles;
+            return tiles;
         }
-        
+
         //Configura els 7 botons donan-lis a cadascún una caràcter de fitxa aleatori i el treu de l'array.
 
         private void ConfigButtons()
@@ -149,7 +150,7 @@ namespace DominoForm
             for (int i = 0; i < 7; i++)
             {
                 if (tiles[rightTile, i].Equals(button.Text) ||
-                    tiles[leftTile, i].Equals(button.Text)  ||
+                    tiles[leftTile, i].Equals(button.Text) ||
                     tiles[i, rightTile].Equals(button.Text) ||
                     tiles[i, leftTile].Equals(button.Text))
                 {

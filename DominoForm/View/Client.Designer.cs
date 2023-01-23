@@ -1,6 +1,6 @@
-﻿namespace DominoForm
+﻿namespace DominoForm.View
 {
-    partial class Form1
+    partial class Client
     {
         /// <summary>
         ///  Required designer variable.
