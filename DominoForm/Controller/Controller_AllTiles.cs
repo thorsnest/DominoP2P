@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DominoForm.View;
+using System.Net.WebSockets;
 
 namespace DominoForm.Controller
 {
@@ -15,12 +16,33 @@ namespace DominoForm.Controller
         Button[] hand;          //La mano del jugador
         int leftTile;           //El valor aceptado del lado izquierdo del tablero
         int rightTile;          //El valor aceptado del lado derecho del tablero
-        public Controller_AllTiles()
+        string ip;
+        int port;
+        public Controller_AllTiles(bool isHost)
         {
             f = new Client();
+            if(isHost)
+            {
+                createServerSocket(port);
+                joinGame("ws://localhost", port);
+            } 
+            else
+            {
+                joinGame(ip, port);
+            }
             Config();
             f.tauler.Text += tiles[leftTile, rightTile];
             Application.Run(f);
+        }
+
+        private void joinGame()
+        {
+            //Crear socket cliente (que sea async)
+        }
+
+        private void createServerSocket()
+        {
+            //Buscar alguna forma de creat un socket servidor
         }
 
         private void Config()
