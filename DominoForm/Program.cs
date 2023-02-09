@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text;
 
+using DominoForm.Controller;
 namespace DominoForm
 {
     internal static class Program
@@ -12,7 +13,7 @@ namespace DominoForm
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-            new Controller();
+            new MenuController();
         }
     }
 }

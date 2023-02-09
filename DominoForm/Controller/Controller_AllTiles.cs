@@ -3,53 +3,69 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DominoForm.View;
 
-namespace DominoForm
+namespace DominoForm.Controller
 {
-    internal class Controller
+    internal class Controller_AllTiles
     {
-        Form1 f;                //El tablero
+        Client f;                //El tablero
         string[,] tiles;        //La lista con todas las fichas del juego
+        string[,] pile;        //La lista con todas las fichas del juego
         Button[] hand;          //La mano del jugador
         int leftTile;           //El valor aceptado del lado izquierdo del tablero
         int rightTile;          //El valor aceptado del lado derecho del tablero
-
-        public Controller()
+        public Controller_AllTiles()
         {
-            f = new Form1();
+            f = new Client();
             Config();
-            f.tauler.Text = tiles[0, 0];
+            f.tauler.Text += tiles[leftTile, rightTile];
             Application.Run(f);
         }
 
         private void Config()
         {
             tiles = ConfigTiles();
+            pile = ConfigTiles();
             hand = f.Controls.OfType<Button>().ToArray();
             ConfigButtons();
             EnableHand();
         }
 
-        private static string[,] ConfigTiles()
+        //Emmagatzema els caràcters dominó, omitin les fitxes repetides, dintre de l'array bidimensional 'tiles'
+        //amb la ubicació dient quina peça és (La fitxa amb valors 1 i 4
+        //s'emmagatzema a la casella [1,4] de l'array).
+        //Totes les peces son emmagatazemades pels dos costats excepte les dobles, que s'emmagatzemen en vertical
+        private string[,] ConfigTiles()
         {
             string unicodi0 = "\U0001F031";
             byte[] unicodeBytes = Encoding.Unicode.GetBytes(unicodi0); ;
             string[,] tiles = new string[7, 7];
-            for (int x = 7; x > 0; x--)
+            for (int x = 0; x < 7; x++)
             {
-                for (int j = x; j > 0; j--)
+                for (int j = 0; j < 7; j++)
                 {
-                    tiles[7 - x, 7 - j] = Encoding.Unicode.GetString(unicodeBytes);
-                    tiles[7 - j, 7 - x] = Encoding.Unicode.GetString(unicodeBytes);
+                    if (j != x)
+                    {
+                        tiles[x, j] = Encoding.Unicode.GetString(unicodeBytes);
+                    }
                     unicodeBytes[2]++;
                 }
-                unicodeBytes[2] += (byte)(8 - x);
             }
+            unicodeBytes[2]++;
+            for (int x = 0; x < 7; x++)
+            {
+                tiles[x, x] = Encoding.Unicode.GetString(unicodeBytes);
+                unicodeBytes[2] += 8;
+            }
+
             return tiles;
         }
+
+        //Configura els 7 botons donan-lis a cadascún una caràcter de fitxa aleatori i el treu de l'array.
+
         private void ConfigButtons()
         {
-            string[,] tempTiles = ConfigTiles();
             Random r = new Random();
             string[] hand = new string[7];
             foreach (Button button in this.hand)
@@ -61,11 +77,11 @@ namespace DominoForm
                 {
                     int x = r.Next(7);
                     int y = r.Next(7);
-                    if (tempTiles[x, y] != "")
+                    if (pile[x, y] != "")
                     {
-                        button.Text = tempTiles[x, y];
-                        tempTiles[x, y] = "";
-                        tempTiles[y, x] = "";
+                        button.Text = tiles[x, y];
+                        pile[x, y] = "";
+                        pile[y, x] = "";
                         placed = true;
                     }
                 }
@@ -88,7 +104,14 @@ namespace DominoForm
                 for (int i = 0; i < 7; i++)
                     if (tiles[leftTile, i].Equals(button.Text))
                     {
-                        f.tauler.Text = button.Text + f.tauler.Text;
+                        f.tauler.Text = tiles[i, leftTile] + f.tauler.Text;
+                        leftTile = i;
+                        button.Visible = false;
+                        break;
+                    }
+                    else if (tiles[i, leftTile].Equals(button.Text))
+                    {
+                        f.tauler.Text = tiles[i, leftTile] + f.tauler.Text;
                         leftTile = i;
                         button.Visible = false;
                         break;
@@ -99,7 +122,14 @@ namespace DominoForm
                 for (int i = 0; i < 7; i++)
                     if (tiles[rightTile, i].Equals(button.Text))
                     {
-                        f.tauler.Text += button.Text;
+                        f.tauler.Text += tiles[rightTile, i];
+                        rightTile = i;
+                        button.Visible = false;
+                        break;
+                    }
+                    else if (tiles[i, rightTile].Equals(button.Text))
+                    {
+                        f.tauler.Text += tiles[rightTile, i];
                         rightTile = i;
                         button.Visible = false;
                         break;
@@ -120,7 +150,9 @@ namespace DominoForm
             for (int i = 0; i < 7; i++)
             {
                 if (tiles[rightTile, i].Equals(button.Text) ||
-                    tiles[leftTile, i].Equals(button.Text))
+                    tiles[leftTile, i].Equals(button.Text) ||
+                    tiles[i, rightTile].Equals(button.Text) ||
+                    tiles[i, leftTile].Equals(button.Text))
                 {
                     return true;
                 }
