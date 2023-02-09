@@ -13,6 +13,7 @@ namespace DominoForm
         Button[] hand;          //La mano del jugador
         int leftTile;           //El valor aceptado del lado izquierdo del tablero
         int rightTile;          //El valor aceptado del lado derecho del tablero
+
         public Controller()
         {
             f = new Form1();
@@ -24,8 +25,8 @@ namespace DominoForm
         private void Config()
         {
             tiles = ConfigTiles();
-            ConfigButtons();
             hand = f.Controls.OfType<Button>().ToArray();
+            ConfigButtons();
             EnableHand();
         }
 
@@ -69,7 +70,6 @@ namespace DominoForm
                     }
                 }
             }
-            return hand;
         }
 
         private void Button_MouseDown(object? sender, MouseEventArgs e)
