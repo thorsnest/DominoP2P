@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.ip_TB = new System.Windows.Forms.TextBox();
             this.SubmitButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.port_TB = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -44,12 +44,12 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "IP:";
             // 
-            // textBox1
+            // ip_TB
             // 
-            this.textBox1.Location = new System.Drawing.Point(38, 6);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(212, 23);
-            this.textBox1.TabIndex = 1;
+            this.ip_TB.Location = new System.Drawing.Point(38, 6);
+            this.ip_TB.Name = "ip_TB";
+            this.ip_TB.Size = new System.Drawing.Size(212, 23);
+            this.ip_TB.TabIndex = 1;
             // 
             // SubmitButton
             // 
@@ -69,22 +69,22 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "Port:";
             // 
-            // textBox2
+            // port_TB
             // 
-            this.textBox2.Location = new System.Drawing.Point(291, 6);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(50, 23);
-            this.textBox2.TabIndex = 4;
+            this.port_TB.Location = new System.Drawing.Point(291, 6);
+            this.port_TB.Name = "port_TB";
+            this.port_TB.Size = new System.Drawing.Size(50, 23);
+            this.port_TB.TabIndex = 4;
             // 
             // ConnectPopUp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(447, 34);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.port_TB);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.SubmitButton);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.ip_TB);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "ConnectPopUp";
@@ -98,8 +98,8 @@
 
         private Label label1;
         private Label label2;
-        public TextBox textBox1;
+        public TextBox ip_TB;
         public Button SubmitButton;
-        public TextBox textBox2;
+        public TextBox port_TB;
     }
 }

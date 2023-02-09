@@ -25,7 +25,9 @@ namespace DominoForm.Controller
         private void SubmitButton_Click(object? sender, EventArgs e)
         {
             //Create web socket here
-            throw new NotImplementedException();
+            if(popup.ip_TB.Text != "" && popup.port_TB.Text != ""){
+                new Controller_AllTiles(false, popup.ip_TB.Text, Int32.Parse(popup.port_TB.Text));
+                    }
         }
     }
 }

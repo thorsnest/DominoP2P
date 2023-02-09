@@ -18,17 +18,17 @@ namespace DominoForm.Controller
         int rightTile;          //El valor aceptado del lado derecho del tablero
         string ip;
         int port;
-        public Controller_AllTiles(bool isHost)
+        public Controller_AllTiles(bool isHost, string? ip, int? port)
         {
             f = new Client();
             if(isHost)
             {
-                createServerSocket(port);
-                joinGame("ws://localhost", port);
+                //createServerSocket(port);
+                //joinGame("ws://localhost", port);
             } 
             else
             {
-                joinGame(ip, port);
+                //joinGame(ip, port);
             }
             Config();
             f.tauler.Text += tiles[leftTile, rightTile];

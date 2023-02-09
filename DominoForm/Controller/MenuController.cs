@@ -14,17 +14,17 @@ namespace DominoForm.Controller
 
         public MenuController()
         {
-            this.menu = new Menu();
+            menu = new Menu();
             LoadImage();
             InitListeners();
-            Application.Run(this.menu);
+            Application.Run(menu);
         }
 
         private void InitListeners()
         {
-            this.menu.ConnectButton.Click += ConnectButton_Click;
-            this.menu.HostButton.Click += HostButton_Click;
-            this.menu.OptionsButton.Click += OptionsButton_Click;
+            menu.ConnectButton.Click += ConnectButton_Click;
+            menu.HostButton.Click += HostButton_Click;
+            menu.OptionsButton.Click += OptionsButton_Click;
         }
 
         private void OptionsButton_Click(object? sender, EventArgs e)
@@ -34,7 +34,7 @@ namespace DominoForm.Controller
 
         private void HostButton_Click(object? sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            new Controller_AllTiles(true, null, null);
         }
 
         private void ConnectButton_Click(object? sender, EventArgs e)
@@ -44,8 +44,8 @@ namespace DominoForm.Controller
 
         private void LoadImage()
         {
-            this.menu.LogoImage.ImageLocation = "C:\\Users\\prova\\Downloads\\Domino_pizza_logo.png";
-            this.menu.LogoImage.SizeMode = PictureBoxSizeMode.CenterImage;
+            menu.LogoImage.ImageLocation = "C:\\Users\\prova\\Downloads\\Domino_pizza_logo.png";
+            menu.LogoImage.SizeMode = PictureBoxSizeMode.CenterImage;
         }
     }
 }
