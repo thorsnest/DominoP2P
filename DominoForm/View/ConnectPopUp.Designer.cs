@@ -30,9 +30,9 @@
         {
             this.label1 = new System.Windows.Forms.Label();
             this.ip_TB = new System.Windows.Forms.TextBox();
-            this.SubmitButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.port_TB = new System.Windows.Forms.TextBox();
+            this.SubmitButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -51,15 +51,6 @@
             this.ip_TB.Size = new System.Drawing.Size(212, 23);
             this.ip_TB.TabIndex = 1;
             // 
-            // SubmitButton
-            // 
-            this.SubmitButton.Location = new System.Drawing.Point(349, 6);
-            this.SubmitButton.Name = "SubmitButton";
-            this.SubmitButton.Size = new System.Drawing.Size(88, 23);
-            this.SubmitButton.TabIndex = 2;
-            this.SubmitButton.Text = "Connect";
-            this.SubmitButton.UseVisualStyleBackColor = true;
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -74,7 +65,16 @@
             this.port_TB.Location = new System.Drawing.Point(291, 6);
             this.port_TB.Name = "port_TB";
             this.port_TB.Size = new System.Drawing.Size(50, 23);
-            this.port_TB.TabIndex = 4;
+            this.port_TB.TabIndex = 2;
+            // 
+            // SubmitButton
+            // 
+            this.SubmitButton.Location = new System.Drawing.Point(349, 6);
+            this.SubmitButton.Name = "SubmitButton";
+            this.SubmitButton.Size = new System.Drawing.Size(88, 23);
+            this.SubmitButton.TabIndex = 3;
+            this.SubmitButton.Text = "Connect";
+            this.SubmitButton.UseVisualStyleBackColor = true;
             // 
             // ConnectPopUp
             // 

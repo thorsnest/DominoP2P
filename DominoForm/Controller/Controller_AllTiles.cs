@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using DominoForm.View;
 using System.Net.WebSockets;
+using System.Net.Sockets;
+using System.Net;
+using WebSocket1;
 
 namespace DominoForm.Controller
 {
@@ -16,33 +19,48 @@ namespace DominoForm.Controller
         Button[] hand;          //La mano del jugador
         int leftTile;           //El valor aceptado del lado izquierdo del tablero
         int rightTile;          //El valor aceptado del lado derecho del tablero
-        string ip;
-        int port;
         public Controller_AllTiles(bool isHost, string? ip, int? port)
         {
             f = new Client();
             if(isHost)
             {
-                //createServerSocket(port);
+                f.ip_L.Text = getIP();
+                createServerSocket();
                 //joinGame("ws://localhost", port);
             } 
             else
             {
-                //joinGame(ip, port);
+                joinGame(ip, (int)port);
             }
             Config();
             f.tauler.Text += tiles[leftTile, rightTile];
-            Application.Run(f);
+            
+            f.Show();
         }
 
-        private void joinGame()
+        private string getIP()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with a IPv4 address in the system!");
+        }
+
+        private void joinGame(string ip, int port)
         {
             //Crear socket cliente (que sea async)
+
         }
 
         private void createServerSocket()
         {
             //Buscar alguna forma de creat un socket servidor
+
         }
 
         private void Config()
@@ -52,7 +70,46 @@ namespace DominoForm.Controller
             hand = f.Controls.OfType<Button>().ToArray();
             ConfigButtons();
             EnableHand();
+            InitListeners();
         }
+
+        private void InitListeners()
+        {
+            f.SizeChanged += F_SizeChanged;
+        }
+
+        private void F_SizeChanged(object? sender, EventArgs e)
+        {
+            f.tauler.Font = new  Font(f.tauler.Font.Name, (40 * f.tauler.Width) / 796);
+        }
+
+            public Font GetAdjustedFont(Graphics g, string graphicString, Font originalFont, int containerWidth, int maxFontSize, int minFontSize, bool smallestOnFail)
+            {
+                Font testFont = null;
+                // We utilize MeasureString which we get via a control instance           
+                for (int adjustedSize = maxFontSize; adjustedSize >= minFontSize; adjustedSize--)
+                {
+                    testFont = new Font(originalFont.Name, adjustedSize, originalFont.Style);
+
+                    // Test the string with the new size
+                    SizeF adjustedSizeNew = g.MeasureString(graphicString, testFont);
+
+                    if (containerWidth > Convert.ToInt32(adjustedSizeNew.Width))
+                    {
+                        // Good font, return it
+                        return testFont;
+                    }
+                }
+                    
+                if (smallestOnFail)
+                {
+                    return testFont;
+                }
+                else
+                {
+                    return originalFont;
+                }
+            }
 
         //Emmagatzema els caràcters dominó, omitin les fitxes repetides, dintre de l'array bidimensional 'tiles'
         //amb la ubicació dient quina peça és (La fitxa amb valors 1 i 4
