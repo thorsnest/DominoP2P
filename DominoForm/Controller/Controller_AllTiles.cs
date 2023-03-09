@@ -15,16 +15,16 @@ namespace DominoForm.Controller
 {
     internal class Controller_AllTiles
     {
-        Client f;                //El tablero
+        Client f;               //El tablero
         string[,] tiles;        //La lista con todas las fichas del juego
-        string[,] pile;        //La lista con todas las fichas del juego
+        string[,] pile;         //La lista con todas las fichas del juego
         Button[] hand;          //La mano del jugador
         int leftTile;           //El valor aceptado del lado izquierdo del tablero
         int rightTile;          //El valor aceptado del lado derecho del tablero
-        WebApplication wsHost;
-        WebApplication wsClient;
+        WebApplication wsHost;  //Websocket Host
+        ClientWebSocket wsClient = new ClientWebSocket();//Websocket Cliente
 
-        public Controller_AllTiles(bool isHost, string? ip, int? port)
+        public Controller_AllTiles(bool isHost, string? ip)
         {
             f = new Client();
             if(isHost)
@@ -43,11 +43,11 @@ namespace DominoForm.Controller
                     Console.Error.WriteLine("Could't create the server, exiting...");
                     f.Dispose();
                 }
-                //joinGame("ws://localhost", port);
+                joinGame(ip);
             } 
             else
             {
-                joinGame(ip, (int)port);
+                joinGame(ip!);
             }
             Config();
             f.tauler.Text += tiles[leftTile, rightTile];
@@ -68,10 +68,19 @@ namespace DominoForm.Controller
             throw new Exception("No network adapters with a IPv4 address in the system!");
         }
 
-        private void joinGame(string ip, int port)
+        private void joinGame(string ip)
         {
-            //Crear socket cliente (que sea async)
-
+            //Crear socket cliente 
+            wsClient.ConnectAsync(new Uri(ip), CancellationToken.None);
+            Task.Run(() =>
+            {
+                byte[] buffer = new byte[1024];
+                while(wsClient.State == WebSocketState.Open)
+                {
+                    var result = wsClient.ReceiveAsync(buffer, CancellationToken.None);
+                    Console.WriteLine(Encoding.UTF8.GetString(buffer, 0, result.Result.Count));
+                }
+            });
         }
 
         private void createServerSocket()

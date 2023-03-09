@@ -34,7 +34,7 @@ namespace DominoForm.Controller
 
         private void HostButton_Click(object? sender, EventArgs e)
         {
-            new Controller_AllTiles(true, null, null);
+            new Controller_AllTiles(true, "ws://localhost:8080");
         }
 
         private void ConnectButton_Click(object? sender, EventArgs e)

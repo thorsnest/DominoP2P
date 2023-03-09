@@ -46,7 +46,7 @@ namespace DominoForm.Controller
         {
             //Create web socket here
             if(popup.ip_TB.Text != "" && popup.port_TB.Text != ""){
-                new Controller_AllTiles(false, popup.ip_TB.Text, int.Parse(popup.port_TB.Text));
+                new Controller_AllTiles(false, popup.ip_TB.Text);
                     }
         }
     }
