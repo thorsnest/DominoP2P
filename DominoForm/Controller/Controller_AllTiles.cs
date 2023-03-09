@@ -7,7 +7,9 @@ using DominoForm.View;
 using System.Net.WebSockets;
 using System.Net.Sockets;
 using System.Net;
-using WebSocket1;
+using Microsoft.AspNetCore.Builder;
+using System.Diagnostics.Eventing.Reader;
+using Microsoft.Extensions.Hosting;
 
 namespace DominoForm.Controller
 {
@@ -19,6 +21,9 @@ namespace DominoForm.Controller
         Button[] hand;          //La mano del jugador
         int leftTile;           //El valor aceptado del lado izquierdo del tablero
         int rightTile;          //El valor aceptado del lado derecho del tablero
+        WebApplication wsHost;
+        WebApplication wsClient;
+
         public Controller_AllTiles(bool isHost, string? ip, int? port)
         {
             f = new Client();
@@ -26,6 +31,18 @@ namespace DominoForm.Controller
             {
                 f.ip_L.Text = getIP();
                 createServerSocket();
+                if(wsHost is not null)
+                {
+                    Task.Run(() =>
+                    {
+                        wsHost!.Run("http://localhost:8080");
+                    });
+                }
+                else
+                {
+                    Console.Error.WriteLine("Could't create the server, exiting...");
+                    f.Dispose();
+                }
                 //joinGame("ws://localhost", port);
             } 
             else
@@ -60,7 +77,22 @@ namespace DominoForm.Controller
         private void createServerSocket()
         {
             //Buscar alguna forma de creat un socket servidor
-
+            wsHost = WebApplication.CreateBuilder().Build();
+            wsHost.MapGet("/host", async context =>
+            {
+                if(context.WebSockets.IsWebSocketRequest)
+                {
+                    using(WebSocket ws = await context.WebSockets.AcceptWebSocketAsync())
+                    {
+                        byte[] data = Encoding.UTF8.GetBytes("Connected successfully!");
+                        await ws.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None); 
+                    }
+                }
+                else
+                {
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                }
+            });
         }
 
         private void Config()

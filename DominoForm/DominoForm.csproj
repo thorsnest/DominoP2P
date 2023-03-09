@@ -26,9 +26,8 @@
   <ItemGroup>
     <Folder Include="Model\" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\WebSocket1\WebSocket1\WebSocket1.csproj" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
 </Project>
