@@ -10,6 +10,7 @@ using System.Net;
 using Microsoft.AspNetCore.Builder;
 using System.Diagnostics.Eventing.Reader;
 using Microsoft.Extensions.Hosting;
+using System.Diagnostics;
 
 namespace DominoForm.Controller
 {
@@ -23,36 +24,45 @@ namespace DominoForm.Controller
         int rightTile;          //El valor aceptado del lado derecho del tablero
         WebApplication wsHost;  //Websocket Host
         ClientWebSocket wsClient = new ClientWebSocket();//Websocket Cliente
+        string ip;
 
         public Controller_AllTiles(bool isHost, string? ip)
         {
             f = new Client();
-            if (isHost)
+            this.ip = ip!;
+            if(isHost)
             {
+                startAsHost();
+            } 
+            else
+            {
+                startAsPlayer();
+            }
+            Config();
+            f.tauler.Text += tiles![leftTile, rightTile];
+            
+            f.Show();
+        }
+
+        private void startAsPlayer()
+        {
+            throw new NotImplementedException();
+        }
+
+        private async void startAsHost()
+        {
                 f.ip_L.Text = getIP();
                 createServerSocket();
-                if (wsHost is not null)
+                if(wsHost is not null)
                 {
-                    Task.Run(() =>
-                    {
-                        wsHost!.Run("http://localhost:8080");
-                    });
+                    wsHost!.RunAsync("http://localhost:8080");
                 }
                 else
                 {
                     Console.Error.WriteLine("Could't create the server, exiting...");
                     f.Dispose();
                 }
-                joinGame(ip);
-            }
-            else
-            {
-                joinGame(ip!);
-            }
-            Config();
-            f.tauler.Text += tiles[leftTile, rightTile];
-
-            f.Show();
+                await joinGame(ip!);
         }
 
         private string getIP()
@@ -68,38 +78,40 @@ namespace DominoForm.Controller
             throw new Exception("No network adapters with a IPv4 address in the system!");
         }
 
-        private void joinGame(string ip)
+        private async Task joinGame(string ip)
         {
             //Crear socket cliente 
-            wsClient.ConnectAsync(new Uri(ip), CancellationToken.None);
-            Task.Run(() =>
+            await wsClient.ConnectAsync(new Uri(ip), CancellationToken.None);
+            byte[] buffer = new byte[1024];
+            while(wsClient.State == WebSocketState.Open)
             {
-                byte[] buffer = new byte[1024];
-                while (wsClient.State == WebSocketState.Open)
-                {
-                    var result = wsClient.ReceiveAsync(buffer, CancellationToken.None);
-                    Console.WriteLine(Encoding.UTF8.GetString(buffer, 0, result.Result.Count));
-                }
-            });
+                var result = await wsClient.ReceiveAsync(buffer, CancellationToken.None);
+                Debug.WriteLine(Encoding.UTF8.GetString(buffer, 0, result.Count));
+            }
         }
 
         private void createServerSocket()
         {
             //Buscar alguna forma de creat un socket servidor
-            //wsHost = WebApplication.CreateBuilder().Build();
+            wsHost = WebApplication.CreateBuilder().Build();
+            wsHost.UseWebSockets();
             wsHost.MapGet("/host", async context =>
             {
-                if (context.WebSockets.IsWebSocketRequest)
+                if(context.WebSockets.IsWebSocketRequest)
                 {
-                    using (WebSocket ws = await context.WebSockets.AcceptWebSocketAsync())
+                    using(WebSocket ws = await context.WebSockets.AcceptWebSocketAsync())
                     {
-                        byte[] data = Encoding.UTF8.GetBytes("Connected successfully!");
-                        await ws.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
+                        while(ws.State == WebSocketState.Open)
+                        {
+                            byte[] data = Encoding.UTF8.GetBytes("Connected successfully!");
+                            await ws.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
+                            await Task.Delay(1000);
+                        }
                     }
                 }
                 else
                 {
-                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    context.Response.StatusCode = (int)HttpStatusCode.BadGateway;
                 }
             });
         }
@@ -117,46 +129,40 @@ namespace DominoForm.Controller
         private void InitListeners()
         {
             f.SizeChanged += F_SizeChanged;
-            f.Disposed += F_Disposed;
-        }
-
-        private void F_Disposed(object? sender, EventArgs e)
-        {
-            wsHost = null;
         }
 
         private void F_SizeChanged(object? sender, EventArgs e)
         {
-            f.tauler.Font = new Font(f.tauler.Font.Name, (40 * f.tauler.Width) / 796);
+            f.tauler.Font = new  Font(f.tauler.Font.Name, (40 * f.tauler.Width) / 796);
         }
 
-        public Font GetAdjustedFont(Graphics g, string graphicString, Font originalFont, int containerWidth, int maxFontSize, int minFontSize, bool smallestOnFail)
-        {
-            Font testFont = null;
-            // We utilize MeasureString which we get via a control instance           
-            for (int adjustedSize = maxFontSize; adjustedSize >= minFontSize; adjustedSize--)
+            public Font GetAdjustedFont(Graphics g, string graphicString, Font originalFont, int containerWidth, int maxFontSize, int minFontSize, bool smallestOnFail)
             {
-                testFont = new Font(originalFont.Name, adjustedSize, originalFont.Style);
-
-                // Test the string with the new size
-                SizeF adjustedSizeNew = g.MeasureString(graphicString, testFont);
-
-                if (containerWidth > Convert.ToInt32(adjustedSizeNew.Width))
+                Font testFont = null;
+                // We utilize MeasureString which we get via a control instance           
+                for (int adjustedSize = maxFontSize; adjustedSize >= minFontSize; adjustedSize--)
                 {
-                    // Good font, return it
+                    testFont = new Font(originalFont.Name, adjustedSize, originalFont.Style);
+
+                    // Test the string with the new size
+                    SizeF adjustedSizeNew = g.MeasureString(graphicString, testFont);
+
+                    if (containerWidth > Convert.ToInt32(adjustedSizeNew.Width))
+                    {
+                        // Good font, return it
+                        return testFont;
+                    }
+                }
+                    
+                if (smallestOnFail)
+                {
                     return testFont;
                 }
+                else
+                {
+                    return originalFont;
+                }
             }
-
-            if (smallestOnFail)
-            {
-                return testFont;
-            }
-            else
-            {
-                return originalFont;
-            }
-        }
 
         //Emmagatzema els caràcters dominó, omitin les fitxes repetides, dintre de l'array bidimensional 'tiles'
         //amb la ubicació dient quina peça és (La fitxa amb valors 1 i 4
