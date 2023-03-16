@@ -188,7 +188,7 @@ namespace DominoForm.Controller
             return tiles;
         }
 
-        //Configura els 7 botons donan-lis a cadascún una caràcter de fitxa aleatori i el treu de l'array.
+        //Configura els 7 botons donan-lis a cadascún una caràcter de fitxa aleatori i el treu de l'array.a
 
         private void ConfigButtons()
         {
