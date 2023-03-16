@@ -36,7 +36,7 @@ namespace DominoForm.Controller
         private void SubmitButton_Click(object? sender, EventArgs e)
         {
             //Create web socket here
-            if(popup.ip_TB.Text != "" && popup.port_TB.Text != ""){
+            if(popup.ip_TB.Text != ""){
                 new Controller_AllTiles(false, popup.ip_TB.Text);
                     }
         }
