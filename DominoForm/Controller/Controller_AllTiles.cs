@@ -27,11 +27,11 @@ namespace DominoForm.Controller
         public Controller_AllTiles(bool isHost, string? ip)
         {
             f = new Client();
-            if(isHost)
+            if (isHost)
             {
                 f.ip_L.Text = getIP();
                 createServerSocket();
-                if(wsHost is not null)
+                if (wsHost is not null)
                 {
                     Task.Run(() =>
                     {
@@ -44,14 +44,14 @@ namespace DominoForm.Controller
                     f.Dispose();
                 }
                 joinGame(ip);
-            } 
+            }
             else
             {
                 joinGame(ip!);
             }
             Config();
             f.tauler.Text += tiles[leftTile, rightTile];
-            
+
             f.Show();
         }
 
@@ -75,7 +75,7 @@ namespace DominoForm.Controller
             Task.Run(() =>
             {
                 byte[] buffer = new byte[1024];
-                while(wsClient.State == WebSocketState.Open)
+                while (wsClient.State == WebSocketState.Open)
                 {
                     var result = wsClient.ReceiveAsync(buffer, CancellationToken.None);
                     Console.WriteLine(Encoding.UTF8.GetString(buffer, 0, result.Result.Count));
@@ -86,15 +86,15 @@ namespace DominoForm.Controller
         private void createServerSocket()
         {
             //Buscar alguna forma de creat un socket servidor
-            wsHost = WebApplication.CreateBuilder().Build();
+            //wsHost = WebApplication.CreateBuilder().Build();
             wsHost.MapGet("/host", async context =>
             {
-                if(context.WebSockets.IsWebSocketRequest)
+                if (context.WebSockets.IsWebSocketRequest)
                 {
-                    using(WebSocket ws = await context.WebSockets.AcceptWebSocketAsync())
+                    using (WebSocket ws = await context.WebSockets.AcceptWebSocketAsync())
                     {
                         byte[] data = Encoding.UTF8.GetBytes("Connected successfully!");
-                        await ws.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None); 
+                        await ws.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
                     }
                 }
                 else
@@ -117,40 +117,46 @@ namespace DominoForm.Controller
         private void InitListeners()
         {
             f.SizeChanged += F_SizeChanged;
+            f.Disposed += F_Disposed;
+        }
+
+        private void F_Disposed(object? sender, EventArgs e)
+        {
+            wsHost = null;
         }
 
         private void F_SizeChanged(object? sender, EventArgs e)
         {
-            f.tauler.Font = new  Font(f.tauler.Font.Name, (40 * f.tauler.Width) / 796);
+            f.tauler.Font = new Font(f.tauler.Font.Name, (40 * f.tauler.Width) / 796);
         }
 
-            public Font GetAdjustedFont(Graphics g, string graphicString, Font originalFont, int containerWidth, int maxFontSize, int minFontSize, bool smallestOnFail)
+        public Font GetAdjustedFont(Graphics g, string graphicString, Font originalFont, int containerWidth, int maxFontSize, int minFontSize, bool smallestOnFail)
+        {
+            Font testFont = null;
+            // We utilize MeasureString which we get via a control instance           
+            for (int adjustedSize = maxFontSize; adjustedSize >= minFontSize; adjustedSize--)
             {
-                Font testFont = null;
-                // We utilize MeasureString which we get via a control instance           
-                for (int adjustedSize = maxFontSize; adjustedSize >= minFontSize; adjustedSize--)
-                {
-                    testFont = new Font(originalFont.Name, adjustedSize, originalFont.Style);
+                testFont = new Font(originalFont.Name, adjustedSize, originalFont.Style);
 
-                    // Test the string with the new size
-                    SizeF adjustedSizeNew = g.MeasureString(graphicString, testFont);
+                // Test the string with the new size
+                SizeF adjustedSizeNew = g.MeasureString(graphicString, testFont);
 
-                    if (containerWidth > Convert.ToInt32(adjustedSizeNew.Width))
-                    {
-                        // Good font, return it
-                        return testFont;
-                    }
-                }
-                    
-                if (smallestOnFail)
+                if (containerWidth > Convert.ToInt32(adjustedSizeNew.Width))
                 {
+                    // Good font, return it
                     return testFont;
                 }
-                else
-                {
-                    return originalFont;
-                }
             }
+
+            if (smallestOnFail)
+            {
+                return testFont;
+            }
+            else
+            {
+                return originalFont;
+            }
+        }
 
         //Emmagatzema els caràcters dominó, omitin les fitxes repetides, dintre de l'array bidimensional 'tiles'
         //amb la ubicació dient quina peça és (La fitxa amb valors 1 i 4

@@ -37,8 +37,6 @@
             this.tile6_B = new System.Windows.Forms.Button();
             this.tile5_B = new System.Windows.Forms.Button();
             this.ip_L = new System.Windows.Forms.Label();
-            this.port_L = new System.Windows.Forms.Label();
-            this.portText_L = new System.Windows.Forms.Label();
             this.ipText_L = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -156,43 +154,22 @@
             // ip_L
             // 
             this.ip_L.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ip_L.Location = new System.Drawing.Point(688, 9);
+            this.ip_L.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ip_L.Location = new System.Drawing.Point(657, 9);
             this.ip_L.MinimumSize = new System.Drawing.Size(100, 0);
             this.ip_L.Name = "ip_L";
-            this.ip_L.Size = new System.Drawing.Size(100, 15);
+            this.ip_L.Size = new System.Drawing.Size(131, 22);
             this.ip_L.TabIndex = 8;
             this.ip_L.Text = "123.123.123";
-            // 
-            // port_L
-            // 
-            this.port_L.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.port_L.AutoSize = true;
-            this.port_L.Location = new System.Drawing.Point(688, 33);
-            this.port_L.MinimumSize = new System.Drawing.Size(100, 0);
-            this.port_L.Name = "port_L";
-            this.port_L.Size = new System.Drawing.Size(100, 15);
-            this.port_L.TabIndex = 9;
-            this.port_L.Text = "8080";
-            // 
-            // portText_L
-            // 
-            this.portText_L.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.portText_L.AutoSize = true;
-            this.portText_L.Location = new System.Drawing.Point(582, 33);
-            this.portText_L.MinimumSize = new System.Drawing.Size(100, 0);
-            this.portText_L.Name = "portText_L";
-            this.portText_L.Size = new System.Drawing.Size(100, 15);
-            this.portText_L.TabIndex = 11;
-            this.portText_L.Text = "Port:";
-            this.portText_L.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // ipText_L
             // 
             this.ipText_L.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ipText_L.Location = new System.Drawing.Point(582, 9);
+            this.ipText_L.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ipText_L.Location = new System.Drawing.Point(476, 9);
             this.ipText_L.MinimumSize = new System.Drawing.Size(100, 0);
             this.ipText_L.Name = "ipText_L";
-            this.ipText_L.Size = new System.Drawing.Size(100, 15);
+            this.ipText_L.Size = new System.Drawing.Size(175, 22);
             this.ipText_L.TabIndex = 10;
             this.ipText_L.Text = "IP Address:";
             this.ipText_L.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -202,9 +179,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.portText_L);
             this.Controls.Add(this.ipText_L);
-            this.Controls.Add(this.port_L);
             this.Controls.Add(this.ip_L);
             this.Controls.Add(this.tile7_B);
             this.Controls.Add(this.tile6_B);
@@ -218,7 +193,6 @@
             this.Name = "Client";
             this.Text = "Form1";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -233,8 +207,6 @@
         private Button tile6_B;
         private Button tile5_B;
         public Label ip_L;
-        public Label port_L;
-        public Label portText_L;
         public Label ipText_L;
     }
 }
