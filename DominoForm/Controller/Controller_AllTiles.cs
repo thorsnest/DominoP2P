@@ -55,7 +55,7 @@ namespace DominoForm.Controller
                 createServerSocket();
                 if(wsHost is not null)
                 {
-                    wsHost!.RunAsync("http://127.0.0.1:8080");
+                    wsHost!.RunAsync("http://0.0.0.0:8080");
                 }
                 else
                 {
