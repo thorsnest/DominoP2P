@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Builder;
 using System.Diagnostics.Eventing.Reader;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace DominoForm.Controller
 {
@@ -25,6 +27,7 @@ namespace DominoForm.Controller
         WebApplication wsHost;  //Websocket Host
         ClientWebSocket wsClient = new ClientWebSocket();//Websocket Cliente
         string ip;
+        CancellationTokenSource cts = new CancellationTokenSource();
 
         public Controller_AllTiles(bool isHost, string? ip)
         {
@@ -84,14 +87,23 @@ namespace DominoForm.Controller
             wsHost.UseWebSockets();
             wsHost.MapGet("/host", async context =>
             {
+                var rcvBytes = new byte[256];
+                var rcvBuffer = new ArraySegment<byte>(rcvBytes);
                 if (context.WebSockets.IsWebSocketRequest)
                 {
                     using (WebSocket ws = await context.WebSockets.AcceptWebSocketAsync())
                     {
                         while (ws.State == WebSocketState.Open)
                         {
-                            byte[] data = Encoding.UTF8.GetBytes("Connected successfully!");
-                            await ws.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
+                            //byte[] data = Encoding.UTF8.GetBytes("Connected successfully!");
+                            //await ws.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
+
+                            WebSocketReceiveResult rcvResult = await ws.ReceiveAsync(rcvBuffer, CancellationToken.None);
+                            byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(rcvResult.Count).ToArray();
+                            string rcvMsg = Encoding.UTF8.GetString(msgBytes);
+
+                            await ws.SendAsync(Encoding.UTF8.GetBytes(rcvMsg),
+                                WebSocketMessageType.Text, true, CancellationToken.None);
                             await Task.Delay(1000);
                         }
                     }
@@ -119,7 +131,10 @@ namespace DominoForm.Controller
             while (wsClient.State == WebSocketState.Open)
             {
                 var result = await wsClient.ReceiveAsync(buffer, CancellationToken.None);
-                Debug.WriteLine(Encoding.UTF8.GetString(buffer, 0, result.Count));
+
+                var resultText = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                Debug.WriteLine(resultText);
+                f.tauler.Text = resultText.Substring(0,resultText.Length-2);
             }
         }
 
@@ -189,8 +204,6 @@ namespace DominoForm.Controller
             }
         }
 
-        #endregion
-
         private void InitListeners()
         {
             f.SizeChanged += F_SizeChanged;
@@ -229,7 +242,7 @@ namespace DominoForm.Controller
             }
         }
 
-
+        #endregion
 
         private void Button_MouseDown(object? sender, MouseEventArgs e)
         {
@@ -240,21 +253,18 @@ namespace DominoForm.Controller
             EnableHand();
         }
 
-        private void PlaceTile(Button button, bool left)
+        private async void PlaceTile(Button button, bool left)
         {
             if (left)
             {
                 for (int i = 0; i < 7; i++)
-                    if (tiles[leftTile, i].Equals(button.Text))
+                    if (tiles[leftTile, i].Equals(button.Text) || tiles[i, leftTile].Equals(button.Text))
                     {
-                        f.tauler.Text = tiles[i, leftTile] + f.tauler.Text;
-                        leftTile = i;
-                        button.Visible = false;
-                        break;
-                    }
-                    else if (tiles[i, leftTile].Equals(button.Text))
-                    {
-                        f.tauler.Text = tiles[i, leftTile] + f.tauler.Text;
+                        string? missatge = tiles[i, leftTile] + f.tauler.Text + i + rightTile;
+                        byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
+                        var sendBuffer = new ArraySegment<byte>(sendBytes);
+                        await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
+                       // f.tauler.Text = tiles[i, leftTile] + f.tauler.Text;
                         leftTile = i;
                         button.Visible = false;
                         break;
@@ -263,16 +273,13 @@ namespace DominoForm.Controller
             else
             {
                 for (int i = 0; i < 7; i++)
-                    if (tiles[rightTile, i].Equals(button.Text))
+                    if (tiles[rightTile, i].Equals(button.Text) || tiles[i, rightTile].Equals(button.Text))
                     {
-                        f.tauler.Text += tiles[rightTile, i];
-                        rightTile = i;
-                        button.Visible = false;
-                        break;
-                    }
-                    else if (tiles[i, rightTile].Equals(button.Text))
-                    {
-                        f.tauler.Text += tiles[rightTile, i];
+                        string? missatge = f.tauler.Text + tiles[i, rightTile] + leftTile + i;
+                        byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
+                        var sendBuffer = new ArraySegment<byte>(sendBytes);
+                        await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
+                        // f.tauler.Text += tiles[rightTile, i];
                         rightTile = i;
                         button.Visible = false;
                         break;
