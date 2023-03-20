@@ -30,41 +30,41 @@ namespace DominoForm.Controller
         {
             f = new Client();
             this.ip = ip!;
-            if(isHost)
+
+            MainStart(isHost);
+        }
+
+        private void MainStart(bool isHost)
+        {
+            if (isHost)
             {
                 startAsHost();
-            } 
+            }
             else
             {
                 startAsPlayer();
             }
-            Config();
+            Setup();
             f.tauler.Text += tiles![leftTile, rightTile];
-            
             f.Show();
         }
 
-        private async void startAsPlayer()
-        {
-            await joinGame(ip);
-        }
-
+        #region Servidor
         private async void startAsHost()
         {
-                f.ip_L.Text = getIP();
-                createServerSocket();
-                if(wsHost is not null)
-                {
-                    wsHost!.RunAsync("http://0.0.0.0:8080");
-                }
-                else
-                {
-                    Console.Error.WriteLine("Could't create the server, exiting...");
-                    f.Dispose();
-                }
-                await joinGame(ip!);
+            f.ip_L.Text = getIP();
+            createServerSocket();
+            if (wsHost is not null)
+            {
+                wsHost!.RunAsync("http://0.0.0.0:8080");
+            }
+            else
+            {
+                Console.Error.WriteLine("Could't create the server, exiting...");
+                f.Dispose();
+            }
+            await joinGame(ip!);
         }
-
         private string getIP()
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());
@@ -77,19 +77,6 @@ namespace DominoForm.Controller
             }
             throw new Exception("No network adapters with a IPv4 address in the system!");
         }
-
-        private async Task joinGame(string ip)
-        {
-            //Crear socket cliente 
-            await wsClient.ConnectAsync(new Uri(ip), CancellationToken.None);
-            byte[] buffer = new byte[1024];
-            while(wsClient.State == WebSocketState.Open)
-            {
-                var result = await wsClient.ReceiveAsync(buffer, CancellationToken.None);
-                Debug.WriteLine(Encoding.UTF8.GetString(buffer, 0, result.Count));
-            }
-        }
-
         private void createServerSocket()
         {
             //Buscar alguna forma de creat un socket servidor
@@ -97,11 +84,11 @@ namespace DominoForm.Controller
             wsHost.UseWebSockets();
             wsHost.MapGet("/host", async context =>
             {
-                if(context.WebSockets.IsWebSocketRequest)
+                if (context.WebSockets.IsWebSocketRequest)
                 {
-                    using(WebSocket ws = await context.WebSockets.AcceptWebSocketAsync())
+                    using (WebSocket ws = await context.WebSockets.AcceptWebSocketAsync())
                     {
-                        while(ws.State == WebSocketState.Open)
+                        while (ws.State == WebSocketState.Open)
                         {
                             byte[] data = Encoding.UTF8.GetBytes("Connected successfully!");
                             await ws.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
@@ -116,59 +103,42 @@ namespace DominoForm.Controller
             });
         }
 
-        private void Config()
+        #endregion
+
+        #region Client
+        private async void startAsPlayer()
         {
-            tiles = ConfigTiles();
-            pile = ConfigTiles();
+            await joinGame(ip);
+        }
+
+        private async Task joinGame(string ip)
+        {
+            //Crear socket cliente 
+            await wsClient.ConnectAsync(new Uri(ip), CancellationToken.None);
+            byte[] buffer = new byte[1024];
+            while (wsClient.State == WebSocketState.Open)
+            {
+                var result = await wsClient.ReceiveAsync(buffer, CancellationToken.None);
+                Debug.WriteLine(Encoding.UTF8.GetString(buffer, 0, result.Count));
+            }
+        }
+
+        #region Setup
+        private void Setup()
+        {
+            tiles = SetupTiles();
+            pile = SetupTiles();
             hand = f.Controls.OfType<Button>().ToArray();
-            ConfigButtons();
+            SetupButtons();
             EnableHand();
             InitListeners();
         }
-
-        private void InitListeners()
-        {
-            f.SizeChanged += F_SizeChanged;
-        }
-
-        private void F_SizeChanged(object? sender, EventArgs e)
-        {
-            f.tauler.Font = new  Font(f.tauler.Font.Name, (40 * f.tauler.Width) / 796);
-        }
-
-            public Font GetAdjustedFont(Graphics g, string graphicString, Font originalFont, int containerWidth, int maxFontSize, int minFontSize, bool smallestOnFail)
-            {
-                Font testFont = null;
-                // We utilize MeasureString which we get via a control instance           
-                for (int adjustedSize = maxFontSize; adjustedSize >= minFontSize; adjustedSize--)
-                {
-                    testFont = new Font(originalFont.Name, adjustedSize, originalFont.Style);
-
-                    // Test the string with the new size
-                    SizeF adjustedSizeNew = g.MeasureString(graphicString, testFont);
-
-                    if (containerWidth > Convert.ToInt32(adjustedSizeNew.Width))
-                    {
-                        // Good font, return it
-                        return testFont;
-                    }
-                }
-                    
-                if (smallestOnFail)
-                {
-                    return testFont;
-                }
-                else
-                {
-                    return originalFont;
-                }
-            }
 
         //Emmagatzema els caràcters dominó, omitin les fitxes repetides, dintre de l'array bidimensional 'tiles'
         //amb la ubicació dient quina peça és (La fitxa amb valors 1 i 4
         //s'emmagatzema a la casella [1,4] de l'array).
         //Totes les peces son emmagatazemades pels dos costats excepte les dobles, que s'emmagatzemen en vertical
-        private string[,] ConfigTiles()
+        private string[,] SetupTiles()
         {
             string unicodi0 = "\U0001F031";
             byte[] unicodeBytes = Encoding.Unicode.GetBytes(unicodi0); ;
@@ -195,8 +165,7 @@ namespace DominoForm.Controller
         }
 
         //Configura els 7 botons donan-lis a cadascún una caràcter de fitxa aleatori i el treu de l'array.
-
-        private void ConfigButtons()
+        private void SetupButtons()
         {
             Random r = new Random();
             string[] hand = new string[7];
@@ -219,6 +188,48 @@ namespace DominoForm.Controller
                 }
             }
         }
+
+        #endregion
+
+        private void InitListeners()
+        {
+            f.SizeChanged += F_SizeChanged;
+        }
+
+        private void F_SizeChanged(object? sender, EventArgs e)
+        {
+            f.tauler.Font = new Font(f.tauler.Font.Name, (40 * f.tauler.Width) / 796);
+        }
+
+        public Font GetAdjustedFont(Graphics g, string graphicString, Font originalFont, int containerWidth, int maxFontSize, int minFontSize, bool smallestOnFail)
+        {
+            Font testFont = null;
+            // We utilize MeasureString which we get via a control instance           
+            for (int adjustedSize = maxFontSize; adjustedSize >= minFontSize; adjustedSize--)
+            {
+                testFont = new Font(originalFont.Name, adjustedSize, originalFont.Style);
+
+                // Test the string with the new size
+                SizeF adjustedSizeNew = g.MeasureString(graphicString, testFont);
+
+                if (containerWidth > Convert.ToInt32(adjustedSizeNew.Width))
+                {
+                    // Good font, return it
+                    return testFont;
+                }
+            }
+
+            if (smallestOnFail)
+            {
+                return testFont;
+            }
+            else
+            {
+                return originalFont;
+            }
+        }
+
+
 
         private void Button_MouseDown(object? sender, MouseEventArgs e)
         {
@@ -291,6 +302,7 @@ namespace DominoForm.Controller
             }
             return false;
         }
+        #endregion
 
     }
 }
