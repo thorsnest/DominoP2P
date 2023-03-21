@@ -10,7 +10,6 @@ using DominoForm.Model;
 namespace DominoForm.Controller
 {
     /*TODO
-     * - No dejar jugar a menos que haya 4 jugadores.
      * - Detectar quien ha ganado.
      */
     internal class Controller_AllTiles
