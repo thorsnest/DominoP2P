@@ -38,6 +38,7 @@
             this.tile5_B = new System.Windows.Forms.Button();
             this.ip_L = new System.Windows.Forms.Label();
             this.ipText_L = new System.Windows.Forms.Label();
+            this.playerNum_L = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // tauler
@@ -173,11 +174,22 @@
             this.ipText_L.Text = "IP Address:";
             this.ipText_L.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // playerNum_L
+            // 
+            this.playerNum_L.AutoSize = true;
+            this.playerNum_L.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.playerNum_L.Location = new System.Drawing.Point(12, 17);
+            this.playerNum_L.Name = "playerNum_L";
+            this.playerNum_L.Size = new System.Drawing.Size(111, 37);
+            this.playerNum_L.TabIndex = 11;
+            this.playerNum_L.Text = "Player 1";
+            // 
             // Client
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.playerNum_L);
             this.Controls.Add(this.ipText_L);
             this.Controls.Add(this.ip_L);
             this.Controls.Add(this.tile7_B);
@@ -192,6 +204,7 @@
             this.Name = "Client";
             this.Text = "Form1";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -207,5 +220,6 @@
         private Button tile5_B;
         public Label ip_L;
         public Label ipText_L;
+        public Label playerNum_L;
     }
 }

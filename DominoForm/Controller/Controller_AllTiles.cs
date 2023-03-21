@@ -6,8 +6,6 @@ using System.Net;
 using Microsoft.AspNetCore.Builder;
 using System.Diagnostics;
 using DominoForm.Model;
-using Microsoft.VisualBasic.Logging;
-using System.Windows.Forms;
 
 namespace DominoForm.Controller
 {
@@ -115,7 +113,8 @@ namespace DominoForm.Controller
                                 {
                                     await ws.SendAsync(Encoding.UTF8.GetBytes(p.turn.ToString()),
                                         WebSocketMessageType.Text, true, CancellationToken.None);
-                                } else if (rcvMsg.Equals("/get"))
+                                }
+                                else if (rcvMsg.Equals("/get"))
                                 {
                                     char[] hand = getHand();
                                     await ws.SendAsync(Encoding.UTF8.GetBytes(hand),
@@ -125,19 +124,31 @@ namespace DominoForm.Controller
                                     {
                                         turn = p.turn;
                                     }
-
                                 }
-                                //En canvi si es una jugada normal, al missatge se li afegeix el torn de la partida per saber a quin jugador li toca, la variable augmenta i es retornen les dades a tots els jugadors
-                                else
+                                else if (rcvMsg.Equals("/left"))
                                 {
-                                    rcvMsg += turn % 4;
-                                    turn++;
                                     foreach (Player player in players)
                                     {
-                                        //rcvMsg = Encoding.UTF8.GetString(msgBytes).Substring(0, rcvMsg.Length - 1);
-                                        msgBytes = Encoding.UTF8.GetBytes(rcvMsg);
+                                        msgBytes = Encoding.UTF8.GetBytes("Players left: " + (4 - playerNum));
                                         await player.ws.SendAsync(msgBytes,
                                             WebSocketMessageType.Text, true, CancellationToken.None);
+                                    }
+                                }
+                                else
+                                {
+                                    if (playerNum == 4)
+                                    {
+                                    //En canvi si es una jugada normal, al missatge se li afegeix el torn de la partida per saber a quin jugador li toca, la variable augmenta i es retornen les dades a tots els jugadors
+                                        rcvMsg += turn % 4;
+                                        turn++;
+                                        foreach (Player player in players)
+                                        {
+                                            //rcvMsg = Encoding.UTF8.GetString(msgBytes).Substring(0, rcvMsg.Length - 1);
+                                            if (rcvMsg.StartsWith("P")) rcvMsg = "66" + ((turn-1)%4);
+                                            msgBytes = Encoding.UTF8.GetBytes(rcvMsg);
+                                            await player.ws.SendAsync(msgBytes,
+                                                WebSocketMessageType.Text, true, CancellationToken.None);
+                                        }
                                     }
                                 }
                             }
@@ -146,7 +157,7 @@ namespace DominoForm.Controller
                         else
                         {
                             DialogResult d = MessageBox.Show("Aquesta partida ja té 4 jugadors");
-                            if(d == DialogResult.OK)
+                            if (d == DialogResult.OK)
                             {
                                 Application.Exit();
                             }
@@ -164,7 +175,7 @@ namespace DominoForm.Controller
         {
             Random r = new Random();
             string hand = "";
-            for(int i = 0; i < 7; i++)
+            for (int i = 0; i < 7; i++)
             {
                 bool placed = false;
                 while (!placed)
@@ -200,6 +211,15 @@ namespace DominoForm.Controller
             await joinGame(ip);
             getPlayerHand();
             getTurn();
+            getPlayersLeft();
+        }
+
+        private async void getPlayersLeft()
+        {
+            string? missatge = "/left";
+            byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
+            var sendBuffer = new ArraySegment<byte>(sendBytes);
+            await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
         }
 
         //Métode que connecta el client al servidor
@@ -220,7 +240,7 @@ namespace DominoForm.Controller
 
                             byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(result.Count).ToArray();
                             string rcvMsg = Encoding.UTF8.GetString(msgBytes);
-                            var resultText = Encoding.UTF8.GetString(buffer, 0, result.Count);               
+                            var resultText = Encoding.UTF8.GetString(buffer, 0, result.Count);
                             Debug.WriteLine(rcvMsg);
                             Control.CheckForIllegalCrossThreadCalls = false;
                             int tempPlayerOrder;
@@ -232,6 +252,16 @@ namespace DominoForm.Controller
                                     SetupButtons(rcvMsg);
                                     if (rcvMsg.IndexOf("🂓") == -1) DisableHand();
                                     else DisableHand6();
+                                }
+                                else if (rcvMsg.Substring(0,1) == "P")
+                                {
+                                    f.tauler.Text = rcvMsg;
+                                    if (rcvMsg.EndsWith("0"))
+                                    {
+                                        f.tauler.Text = "Start!";
+                                        DisableHand6();
+                                    }
+                                    else DisableHand();
                                 }
                                 else
                                 {
@@ -256,6 +286,7 @@ namespace DominoForm.Controller
                             else
                             {
                                 yourTurn = tempPlayerOrder;
+                                f.playerNum_L.Text = "Player " + (yourTurn+1);
                             }
                         }
                     }, cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
@@ -326,7 +357,7 @@ namespace DominoForm.Controller
                         placed = true;
                     }
                 }*/
-                i+=2;
+                i += 2;
             }
         }
 
@@ -353,7 +384,7 @@ namespace DominoForm.Controller
 
         #endregion
 
-            #region Jugabilitat
+        #region Jugabilitat
 
         //Métode que demana al servidor el torn del jugador per després emmagatzemar-ho a una variable
         private async void getPlayerHand()
@@ -434,7 +465,7 @@ namespace DominoForm.Controller
                     if (button.Enabled) cantPlay = false;
                 }
             }
-            if (cantPlay  && !invisible)
+            if (cantPlay && !invisible)
             {
                 SkipTurn();
             }
