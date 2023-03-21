@@ -160,7 +160,6 @@
             this.ip_L.Name = "ip_L";
             this.ip_L.Size = new System.Drawing.Size(131, 22);
             this.ip_L.TabIndex = 8;
-            this.ip_L.Text = "123.123.123";
             // 
             // ipText_L
             // 

@@ -6,13 +6,13 @@ using System.Net;
 using Microsoft.AspNetCore.Builder;
 using System.Diagnostics;
 using DominoForm.Model;
+using Microsoft.VisualBasic.Logging;
+using System.Windows.Forms;
 
 namespace DominoForm.Controller
 {
     /*TODO
      * - No dejar jugar a menos que haya 4 jugadores.
-     * - Repartir fichas únicas desde el servidor.
-     * - Darle el primer turno a quien tenga el doble seis.
      * - Detectar quien ha ganado.
      */
     internal class Controller_AllTiles
@@ -21,15 +21,15 @@ namespace DominoForm.Controller
         string[,] tiles;                                            //La lista con todas las fichas del juego
         string[,] pile;                                             //La lista con todas las fichas del juego
         Button[] hand;                                              //La mano del jugador
-        int leftTile;                                               //El valor aceptado del lado izquierdo del tablero
-        int rightTile;                                              //El valor aceptado del lado derecho del tablero
+        int leftTile = 6;                                          //El valor aceptado del lado izquierdo del tablero
+        int rightTile = 6;                                         //El valor aceptado del lado derecho del tablero
         WebApplication wsHost;                                      //Websocket Host
         ClientWebSocket wsClient = new ClientWebSocket();           //Websocket Cliente
         string ip;                                                  //Dirección IP
         CancellationTokenSource cts = new CancellationTokenSource();//Token de cancelación
         List<Player> players = new List<Player>();                  //Lista de jugadores
         int playerNum;                                              //Número de cada jugador para el servidor
-        int yourTurn;                                               //Número del turno del cliente
+        int yourTurn = -1;                                          //Número del turno del cliente
         int turn;                                                   //Número del turno actual de la partida
 
         public Controller_AllTiles(bool isHost, string? ip)
@@ -49,7 +49,6 @@ namespace DominoForm.Controller
             }
             startAsPlayer();
             Setup();
-            f.tauler.Text += tiles![leftTile, rightTile];
             f.Show();
         }
 
@@ -116,6 +115,17 @@ namespace DominoForm.Controller
                                 {
                                     await ws.SendAsync(Encoding.UTF8.GetBytes(p.turn.ToString()),
                                         WebSocketMessageType.Text, true, CancellationToken.None);
+                                } else if (rcvMsg.Equals("/get"))
+                                {
+                                    char[] hand = getHand();
+                                    await ws.SendAsync(Encoding.UTF8.GetBytes(hand),
+                                        WebSocketMessageType.Text, true, CancellationToken.None);
+                                    string handString = new string(hand);
+                                    if (handString.IndexOf(tiles[6, 6]) != -1)
+                                    {
+                                        turn = p.turn;
+                                    }
+
                                 }
                                 //En canvi si es una jugada normal, al missatge se li afegeix el torn de la partida per saber a quin jugador li toca, la variable augmenta i es retornen les dades a tots els jugadors
                                 else
@@ -150,15 +160,45 @@ namespace DominoForm.Controller
             });
         }
 
+        private char[] getHand()
+        {
+            Random r = new Random();
+            string hand = "";
+            for(int i = 0; i < 7; i++)
+            {
+                bool placed = false;
+                while (!placed)
+                {
+                    int x = r.Next(7);
+                    int y = r.Next(7);
+                    if (pile[x, y] != "")
+                    {
+                        hand += tiles[x, y];
+                        pile[x, y] = "";
+                        pile[y, x] = "";
+                        placed = true;
+                    }
+                }
+            }
+            hand += 'h';
+            return hand.ToCharArray();
+        }
+
         #endregion
 
         #region Client
 
-            #region Setup
+        #region Setup
         //Métode principal per començar a jugar, cridant el métode per connectar-se i emmagatzemant el torn del jugador a la seva respectiva variable
         private async void startAsPlayer()
         {
+            if (f.ip_L.Text == "")
+            {
+                f.ipText_L.Text = "IP Connected:";
+                f.ip_L.Text = ip.Substring(5);
+            }
             await joinGame(ip);
+            getPlayerHand();
             getTurn();
         }
 
@@ -181,27 +221,37 @@ namespace DominoForm.Controller
                             byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(result.Count).ToArray();
                             string rcvMsg = Encoding.UTF8.GetString(msgBytes);
                             var resultText = Encoding.UTF8.GetString(buffer, 0, result.Count);               
-                            Debug.WriteLine(resultText);
+                            Debug.WriteLine(rcvMsg);
                             Control.CheckForIllegalCrossThreadCalls = false;
                             int tempPlayerOrder;
                             if (!int.TryParse(rcvMsg, out tempPlayerOrder))
                             {
-                                /* Exemple resposta: 🁓🂓460
-                                 * La resposta está estructurada de la següent manera:
-                                 * - "🁓🂓" és el tauler actual, que es mostrarà al Label "tauler"
-                                 * - "4" és el valor del tauler per l'esquerra
-                                 * - "6" és el valor del tauler per la dreta
-                                 * - 0 és el jugador a qui li toca
-                                */
-
-                                f.tauler.Text = rcvMsg.Substring(0, rcvMsg.Length - 3);
-                                leftTile = int.Parse(rcvMsg.Substring(rcvMsg.Length - 3, 1));
-                                rightTile = int.Parse(rcvMsg.Substring(rcvMsg.Length - 2, 1));
-                                if (yourTurn == (int.Parse(rcvMsg.Substring(rcvMsg.Length - 1, 1)) + 1) %4)
+                                // Si el missatge acaba en 'h' voldrà dir que es tracta de la mà del jugador
+                                if (rcvMsg.Substring(rcvMsg.Length - 1, 1) == "h")
                                 {
-                                    EnableHand();
+                                    SetupButtons(rcvMsg);
+                                    if (rcvMsg.IndexOf("🂓") == -1) DisableHand();
+                                    else DisableHand6();
                                 }
-                                else DisableHand();
+                                else
+                                {
+                                    /* Exemple resposta: 🁓🂓460
+                                     * La resposta está estructurada de la següent manera:
+                                     * - "🁓🂓" és el tauler actual, que es mostrarà al Label "tauler"
+                                     * - "4" és el valor del tauler per l'esquerra
+                                     * - "6" és el valor del tauler per la dreta
+                                     * - 0 és el jugador a qui li toca
+                                    */
+
+                                    f.tauler.Text = rcvMsg.Substring(0, rcvMsg.Length - 3);
+                                    leftTile = int.Parse(rcvMsg.Substring(rcvMsg.Length - 3, 1));
+                                    rightTile = int.Parse(rcvMsg.Substring(rcvMsg.Length - 2, 1));
+                                    if (yourTurn == (int.Parse(rcvMsg.Substring(rcvMsg.Length - 1, 1)) + 1) % 4)
+                                    {
+                                        EnableHand();
+                                    }
+                                    else DisableHand();
+                                }
                             }
                             else
                             {
@@ -211,14 +261,14 @@ namespace DominoForm.Controller
                     }, cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
             }
         }
+
         //Métode de configuració principal que crida a totes les configuracions inicials
         private void Setup()
         {
             tiles = SetupTiles();
             pile = SetupTiles();
             hand = f.Controls.OfType<Button>().ToArray();
-            SetupButtons();
-            EnableHand();
+            //SetupButtons();
             InitListeners();
         }
 
@@ -253,14 +303,16 @@ namespace DominoForm.Controller
         }
 
         //Configura els 7 botons donan-lis a cadascún una caràcter de fitxa aleatori i el treu de l'array.
-        private void SetupButtons()
+        private void SetupButtons(string rcvMsg)
         {
-            Random r = new Random();
-            string[] hand = new string[7];
-            foreach (Button button in this.hand)
+            //Random r = new Random();
+            //string[] hand = new string[7];
+            int i = 0;
+            foreach (Button button in hand)
             {
                 button.MouseDown += Button_MouseDown;
-
+                button.Text = rcvMsg.Substring(i, 2);
+                /*
                 bool placed = false;
                 while (!placed)
                 {
@@ -273,7 +325,8 @@ namespace DominoForm.Controller
                         pile[y, x] = "";
                         placed = true;
                     }
-                }
+                }*/
+                i+=2;
             }
         }
 
@@ -303,6 +356,15 @@ namespace DominoForm.Controller
             #region Jugabilitat
 
         //Métode que demana al servidor el torn del jugador per després emmagatzemar-ho a una variable
+        private async void getPlayerHand()
+        {
+            string? missatge = "/get";
+            byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
+            var sendBuffer = new ArraySegment<byte>(sendBytes);
+            await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
+        }
+
+        //Métode que demana al servidor el torn del jugador per després emmagatzemar-ho a una variable
         private async void getTurn()
         {
             string? missatge = "/num";
@@ -314,46 +376,77 @@ namespace DominoForm.Controller
         //Métode que comproba si la fitxa clicada pot ser col·locada i la col·loca
         private async void PlaceTile(Button button, bool left)
         {
-            if (left)
+            if (button.Text == tiles[6, 6])
             {
-                for (int i = 0; i < 7; i++)
-                    if (tiles[leftTile, i].Equals(button.Text) || tiles[i, leftTile].Equals(button.Text))
-                    {
-                        string? missatge = tiles[i, leftTile] + f.tauler.Text + i + rightTile;
-                        byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
-                        var sendBuffer = new ArraySegment<byte>(sendBytes);
-                        await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
-                       // f.tauler.Text = tiles[i, leftTile] + f.tauler.Text;
-                        
-                        leftTile = i;
-                        button.Visible = false;
-                        break;
-                    }
+                string? missatge = tiles[6, 6] + 6 + 6;
+                byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
+                var sendBuffer = new ArraySegment<byte>(sendBytes);
+                await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
+                button.Visible = false;
             }
             else
             {
-                for (int i = 0; i < 7; i++)
-                    if (tiles[rightTile, i].Equals(button.Text) || tiles[i, rightTile].Equals(button.Text))
-                    {
-                        string? missatge = f.tauler.Text + tiles[rightTile, i] + leftTile + i;
-                        byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
-                        var sendBuffer = new ArraySegment<byte>(sendBytes);
-                        await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
-                        // f.tauler.Text += tiles[rightTile, i];
-                        rightTile = i;
-                        button.Visible = false;
-                        break;
-                    }
+                if (left)
+                {
+                    for (int i = 0; i < 7; i++)
+                        if (tiles[leftTile, i].Equals(button.Text) || tiles[i, leftTile].Equals(button.Text))
+                        {
+                            string? missatge = tiles[i, leftTile] + f.tauler.Text + i + rightTile;
+                            byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
+                            var sendBuffer = new ArraySegment<byte>(sendBytes);
+                            await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
+                            // f.tauler.Text = tiles[i, leftTile] + f.tauler.Text;
+
+                            leftTile = i;
+                            button.Visible = false;
+                            break;
+                        }
+                }
+                else
+                {
+                    for (int i = 0; i < 7; i++)
+                        if (tiles[rightTile, i].Equals(button.Text) || tiles[i, rightTile].Equals(button.Text))
+                        {
+                            string? missatge = f.tauler.Text + tiles[rightTile, i] + leftTile + i;
+                            byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
+                            var sendBuffer = new ArraySegment<byte>(sendBytes);
+                            await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
+                            // f.tauler.Text += tiles[rightTile, i];
+                            rightTile = i;
+                            button.Visible = false;
+                            break;
+                        }
+                }
             }
         }
 
         //Métode que habilita la mà del jugador
         private void EnableHand()
         {
+            bool cantPlay = true;
+            bool invisible = true;
             foreach (Button button in hand)
             {
-                button.Enabled = CheckPlaceableTile(button);
+                if (button.Visible)
+                {
+                    invisible = false;
+                    button.Enabled = CheckPlaceableTile(button);
+                    if (button.Enabled) cantPlay = false;
+                }
             }
+            if (cantPlay  && !invisible)
+            {
+                SkipTurn();
+            }
+        }
+
+        //Métode que pasa torn
+        private async void SkipTurn()
+        {
+            string? missatge = f.tauler.Text + leftTile + rightTile;
+            byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
+            var sendBuffer = new ArraySegment<byte>(sendBytes);
+            await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
         }
 
         //Métode que deshabilita la mà del jugador
@@ -365,9 +458,19 @@ namespace DominoForm.Controller
             }
         }
 
+        private void DisableHand6()
+        {
+            foreach (Button button in hand)
+            {
+                button.Enabled = button.Text == tiles[6, 6];
+            }
+
+        }
+
         //Métode que comproba si la fitxa de la teva mà pot ser col·locada
         private bool CheckPlaceableTile(Button button)
         {
+            if (button.Text == tiles[6, 6]) return true;
             for (int i = 0; i < 7; i++)
             {
                 if (tiles[rightTile, i].Equals(button.Text) ||
