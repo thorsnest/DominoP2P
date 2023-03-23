@@ -6,6 +6,9 @@ using System.Net;
 using Microsoft.AspNetCore.Builder;
 using System.Diagnostics;
 using DominoForm.Model;
+using System.Numerics;
+using System.Windows.Forms;
+using System.Reflection;
 
 namespace DominoForm.Controller
 {
@@ -21,9 +24,10 @@ namespace DominoForm.Controller
     {
         Client f;                                                       //El tablero
         string[,] tiles;                                                //La lista con todas las fichas del juego
-        string[,] pile;                                                 //La lista con todas las fichas del juego
+        string[,] pile;                                                 //La lista con todas las fichas jugándose
         Button[] hand;                                                  //La mano del jugador
         int[] playersHand = new int[4];                                 //Cantidad de fichas en cada jugador
+        int[] playersPoints = new int[4];
         int leftTile = 6;                                               //El valor aceptado del lado izquierdo del tablero
         int rightTile = 6;                                              //El valor aceptado del lado derecho del tablero
         WebApplication wsHost;                                          //Websocket Host
@@ -91,6 +95,7 @@ namespace DominoForm.Controller
             wsHost.UseWebSockets();
             wsHost.MapGet("/host", async context =>
             {
+                int timesSkipped = 0;
                 string prevMsg = "";
                 List<string> playsLog = new List<string>();
                 var rcvBytes = new byte[256];
@@ -138,34 +143,88 @@ namespace DominoForm.Controller
                                             WebSocketMessageType.Text, true, CancellationToken.None);
                                     }
                                 }
+                                else if (rcvMsg.StartsWith("/points"))
+                                {
+                                    bool filled = true;
+                                    playersPoints[int.Parse(rcvMsg.Substring(7, 1))] = int.Parse(rcvMsg.Substring(8));
+                                    foreach(int points in playersPoints)
+                                    {
+                                        if (points == 0) filled = false;
+                                    }
+                                    if (filled) {
+                                        int lowest = 70;
+                                        int winner = -1;
+                                        for(int i = 0; i<playersPoints.Length;i++)
+                                        {
+                                            if (playersPoints[i] < lowest)
+                                            {
+                                                lowest = playersPoints[i];
+                                                winner = i;
+                                            }
+                                        }
+                                        msgBytes = Encoding.UTF8.GetBytes("The winner is Player " + (winner +1) + " by points!");
+                                        foreach (Player player in players)
+                                        {
+                                            await player.ws.SendAsync(msgBytes,
+                                            WebSocketMessageType.Text, true, CancellationToken.None);
+                                        }
+                                    }
+                                }
                                 else
                                 {
+                                    bool end = false;
                                     if (playerNum == 4)
                                     {
-                                        //En canvi si es una jugada normal, al missatge se li afegeix el torn de la partida per saber a quin jugador li toca, la variable augmenta i es retornen les dades a tots els jugadors
-                                        if (prevMsg.Length < rcvMsg.Length || rcvMsg.StartsWith("Start"))
+                                        for(int i = 0; i<4; i++)
                                         {
-                                            rcvMsg += turn % 4;
+                                            if (int.Parse(rcvMsg.Substring(rcvMsg.Length-6+i,1)) == 0)
+                                            {
+                                                msgBytes = Encoding.UTF8.GetBytes("The winner is Player " + (i + 1) + "!");
+                                                foreach (Player player in players)
+                                                {
+                                                    await player.ws.SendAsync(msgBytes,
+                                                    WebSocketMessageType.Text, true, CancellationToken.None);
+                                                    end = true;
+                                                }
+                                            }
+                                        }
+                                        //En canvi si es una jugada normal, al missatge se li afegeix el torn de la partida per saber a quin jugador li toca, la variable augmenta i es retornen les dades a tots els jugadors
+                                        if (prevMsg.Length-1 <= rcvMsg.Length && !end)
+                                        {
                                             Debug.WriteLine(rcvMsg);
                                             foreach (string play in playsLog){
                                                 if (play.Equals(rcvMsg))
                                                 {
-                                                    Debug.WriteLine("S'ha acabat!");
+                                                    timesSkipped++;
                                                 }
                                             }
-                                            playsLog.Add(rcvMsg);
-                                            turn++;
-                                            foreach (Player player in players)
+                                            if (timesSkipped == 3)
                                             {
-                                                //rcvMsg = Encoding.UTF8.GetString(msgBytes).Substring(0, rcvMsg.Length - 1);
-                                                if (rcvMsg.StartsWith("P")) rcvMsg = "66" + ((turn - 1) % 4);
-                                                msgBytes = Encoding.UTF8.GetBytes(rcvMsg);
-                                                await player.ws.SendAsync(msgBytes,
-                                                    WebSocketMessageType.Text, true, CancellationToken.None);
+                                                rcvMsg ="Domino closed!";
+                                                foreach (Player player in players)
+                                                {
+                                                    msgBytes = Encoding.UTF8.GetBytes(rcvMsg);
+                                                    await player.ws.SendAsync(msgBytes,
+                                                        WebSocketMessageType.Text, true, CancellationToken.None);
+                                                }
                                             }
-                                            prevMsg = rcvMsg;
+                                            else
+                                            {
+                                                timesSkipped = 0;
+                                                playsLog.Add(rcvMsg);
+                                                rcvMsg += turn % 4;
+                                                turn++;
+                                                foreach (Player player in players)
+                                                {
+                                                    //rcvMsg = Encoding.UTF8.GetString(msgBytes).Substring(0, rcvMsg.Length - 1);
+                                                    if (rcvMsg.StartsWith("P")) rcvMsg = "66" + ((turn - 1) % 4);
+                                                    msgBytes = Encoding.UTF8.GetBytes(rcvMsg);
+                                                    await player.ws.SendAsync(msgBytes,
+                                                        WebSocketMessageType.Text, true, CancellationToken.None);
+                                                }
+                                                prevMsg = rcvMsg;
+                                            }
                                         }
-                                        else Debug.WriteLine("Envio doble: " + rcvMsg);
                                     }
                                 }
                             }
@@ -279,6 +338,18 @@ namespace DominoForm.Controller
                                     }
                                     else DisableHand();
                                 }
+                                else if (rcvMsg.StartsWith("D"))
+                                {
+                                    EnviaPunts();
+                                }
+                                else if (rcvMsg.StartsWith("T"))
+                                {
+                                    f.tauler.Text = rcvMsg;
+                                    DisableHand();
+                                    f.player1tiles_L.Text = "";
+                                    f.player2tiles_L.Text = "";
+                                    f.player3tiles_L.Text = "";
+                                }
                                 else
                                 {
                                     /* Exemple resposta: 🁓🂓6677460
@@ -334,6 +405,31 @@ namespace DominoForm.Controller
                         }
                     }, cts.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
             }
+        }
+
+        //Métode que quan es crida retorna els punts totals de cada jugador, junt amb el seu torn per que el servidor el reconeixi.
+        private async void EnviaPunts()
+        {
+            int punts = 0;
+            foreach (Button button in hand)
+            {
+                if (button.Visible)
+                {
+                    for (int i = 0; i < 7; i++)
+                    {
+                        for (int j = 0; j < 7; j++)
+                        {
+                            if (tiles[i, j] == button.Text)
+                            {
+                                punts += i + j;
+                            }
+                        }
+                    }
+                }
+            }
+            byte[] sendBytes = Encoding.UTF8.GetBytes("/points" + yourTurn + punts.ToString());
+            var sendBuffer = new ArraySegment<byte>(sendBytes);
+            await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
         }
 
         //Métode de configuració principal que crida a totes les configuracions inicials
@@ -422,7 +518,7 @@ namespace DominoForm.Controller
             Button? b = sender as Button;
             left = e.Button == MouseButtons.Left;
             PlaceTile(b, left);
-            EnableHand();
+//            EnableHand();
         }
 
         #endregion
@@ -536,7 +632,7 @@ namespace DominoForm.Controller
                     if (button.Enabled) cantPlay = false;
                 }
             }
-            if (cantPlay && !invisible)
+            if (cantPlay)
             {
                 SkipTurn();
             }
