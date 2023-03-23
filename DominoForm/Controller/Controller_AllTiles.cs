@@ -509,7 +509,7 @@ namespace DominoForm.Controller
         //´Métode que canvia el tamany del tauler dinàmicament segons la mida de la finestra
         private void F_SizeChanged(object? sender, EventArgs e)
         {
-            f.tauler.Font = new Font(f.tauler.Font.Name, (25 * f.tauler.Width) / 796);
+            f.tauler.Font = new Font(f.tauler.Font.Name, (23 * f.tauler.Width) / 842);
         }
 
         private void Button_MouseDown(object? sender, MouseEventArgs e)

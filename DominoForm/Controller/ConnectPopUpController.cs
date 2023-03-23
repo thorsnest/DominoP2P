@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DominoForm.View;
+﻿using DominoForm.View;
 
 namespace DominoForm.Controller
 {
@@ -13,20 +8,25 @@ namespace DominoForm.Controller
 
         public ConnectPopUpController()
         {
-            this.popup = new ConnectPopUp();
+            popup = new ConnectPopUp();
             InitListeners();
-            this.popup.Show();
+            popup.Show();
         }
 
         private void InitListeners()
         {
             popup.ip_TB.KeyPress += Ip_TB_KeyPress;
-            this.popup.SubmitButton.Click += SubmitButton_Click;
+            popup.SubmitButton.Click += SubmitButton_Click;
         }
 
         private void Ip_TB_KeyPress(object? sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
+            if (e.Equals("{ENTER}"))
+            {
+                new Controller_AllTiles(false, "ws://" + popup.ip_TB.Text + ":8080/host");
+                popup.Dispose();
+            }
+            else if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
                 (e.KeyChar != '.'))
             {
                 e.Handled = true;

@@ -28,74 +28,87 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.ConnectButton = new System.Windows.Forms.Button();
-            this.HostButton = new System.Windows.Forms.Button();
-            this.OptionsButton = new System.Windows.Forms.Button();
-            this.LogoImage = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.LogoImage)).BeginInit();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Menu));
+            this.connect_B = new System.Windows.Forms.Button();
+            this.host_B = new System.Windows.Forms.Button();
+            this.exit_B = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // ConnectButton
+            // connect_B
             // 
-            this.ConnectButton.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ConnectButton.Location = new System.Drawing.Point(12, 210);
-            this.ConnectButton.Name = "ConnectButton";
-            this.ConnectButton.Size = new System.Drawing.Size(776, 72);
-            this.ConnectButton.TabIndex = 0;
-            this.ConnectButton.Text = "Join Game";
-            this.ConnectButton.UseVisualStyleBackColor = true;
+            this.connect_B.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.connect_B.BackColor = System.Drawing.Color.Transparent;
+            this.connect_B.BackgroundImage = global::DominoForm.Properties.Resources.domino_tile_1;
+            this.connect_B.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.connect_B.FlatAppearance.BorderSize = 0;
+            this.connect_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.connect_B.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.connect_B.Location = new System.Drawing.Point(287, 27);
+            this.connect_B.Name = "connect_B";
+            this.connect_B.Size = new System.Drawing.Size(239, 96);
+            this.connect_B.TabIndex = 0;
+            this.connect_B.Text = "Join Game";
+            this.connect_B.UseVisualStyleBackColor = false;
             // 
-            // HostButton
+            // host_B
             // 
-            this.HostButton.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.HostButton.Location = new System.Drawing.Point(12, 288);
-            this.HostButton.Name = "HostButton";
-            this.HostButton.Size = new System.Drawing.Size(776, 72);
-            this.HostButton.TabIndex = 1;
-            this.HostButton.Text = "Host Game";
-            this.HostButton.UseVisualStyleBackColor = true;
+            this.host_B.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.host_B.BackColor = System.Drawing.Color.Transparent;
+            this.host_B.BackgroundImage = global::DominoForm.Properties.Resources.domino_tile_1;
+            this.host_B.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.host_B.FlatAppearance.BorderSize = 0;
+            this.host_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.host_B.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.host_B.Location = new System.Drawing.Point(287, 144);
+            this.host_B.Name = "host_B";
+            this.host_B.Size = new System.Drawing.Size(239, 96);
+            this.host_B.TabIndex = 1;
+            this.host_B.Text = "Host Game";
+            this.host_B.UseVisualStyleBackColor = false;
             // 
-            // OptionsButton
+            // exit_B
             // 
-            this.OptionsButton.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.OptionsButton.Location = new System.Drawing.Point(12, 366);
-            this.OptionsButton.Name = "OptionsButton";
-            this.OptionsButton.Size = new System.Drawing.Size(776, 72);
-            this.OptionsButton.TabIndex = 2;
-            this.OptionsButton.Text = "Options";
-            this.OptionsButton.UseVisualStyleBackColor = true;
-            // 
-            // LogoImage
-            // 
-            this.LogoImage.InitialImage = null;
-            this.LogoImage.Location = new System.Drawing.Point(12, 12);
-            this.LogoImage.Name = "LogoImage";
-            this.LogoImage.Size = new System.Drawing.Size(776, 192);
-            this.LogoImage.TabIndex = 3;
-            this.LogoImage.TabStop = false;
+            this.exit_B.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.exit_B.BackColor = System.Drawing.Color.Transparent;
+            this.exit_B.BackgroundImage = global::DominoForm.Properties.Resources.domino_tile_1;
+            this.exit_B.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.exit_B.FlatAppearance.BorderSize = 0;
+            this.exit_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.exit_B.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.exit_B.Location = new System.Drawing.Point(287, 261);
+            this.exit_B.Name = "exit_B";
+            this.exit_B.Size = new System.Drawing.Size(239, 96);
+            this.exit_B.TabIndex = 2;
+            this.exit_B.Text = "Exit";
+            this.exit_B.UseVisualStyleBackColor = false;
             // 
             // Menu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.LogoImage);
-            this.Controls.Add(this.OptionsButton);
-            this.Controls.Add(this.HostButton);
-            this.Controls.Add(this.ConnectButton);
+            this.BackColor = System.Drawing.SystemColors.Window;
+            this.BackgroundImage = global::DominoForm.Properties.Resources.Wood;
+            this.ClientSize = new System.Drawing.Size(800, 379);
+            this.Controls.Add(this.exit_B);
+            this.Controls.Add(this.host_B);
+            this.Controls.Add(this.connect_B);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Menu";
-            this.Text = "Menu";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Domino";
+            this.TransparencyKey = System.Drawing.Color.Silver;
             this.Load += new System.EventHandler(this.Menu_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.LogoImage)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        public Button ConnectButton;
-        public Button HostButton;
-        public Button OptionsButton;
-        public PictureBox LogoImage;
+        public Button connect_B;
+        public Button host_B;
+        public Button exit_B;
     }
 }
