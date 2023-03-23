@@ -39,18 +39,19 @@
             this.ip_L = new System.Windows.Forms.Label();
             this.ipText_L = new System.Windows.Forms.Label();
             this.playerNum_L = new System.Windows.Forms.Label();
+            this.player2tiles_L = new System.Windows.Forms.Label();
+            this.player3tiles_L = new System.Windows.Forms.Label();
+            this.player1tiles_L = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // tauler
             // 
-            this.tauler.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tauler.Font = new System.Drawing.Font("Segoe UI", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tauler.Location = new System.Drawing.Point(2, 70);
+            this.tauler.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.tauler.Font = new System.Drawing.Font("Segoe UI", 25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.tauler.Location = new System.Drawing.Point(147, 70);
             this.tauler.MinimumSize = new System.Drawing.Size(796, 245);
             this.tauler.Name = "tauler";
-            this.tauler.Size = new System.Drawing.Size(796, 245);
+            this.tauler.Size = new System.Drawing.Size(842, 245);
             this.tauler.TabIndex = 0;
             this.tauler.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -61,7 +62,7 @@
             this.tile1_B.FlatAppearance.BorderSize = 0;
             this.tile1_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tile1_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile1_B.Location = new System.Drawing.Point(12, 322);
+            this.tile1_B.Location = new System.Drawing.Point(180, 322);
             this.tile1_B.Name = "tile1_B";
             this.tile1_B.Size = new System.Drawing.Size(129, 116);
             this.tile1_B.TabIndex = 1;
@@ -75,7 +76,7 @@
             this.tile2_B.FlatAppearance.BorderSize = 0;
             this.tile2_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tile2_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile2_B.Location = new System.Drawing.Point(124, 322);
+            this.tile2_B.Location = new System.Drawing.Point(292, 322);
             this.tile2_B.Name = "tile2_B";
             this.tile2_B.Size = new System.Drawing.Size(129, 116);
             this.tile2_B.TabIndex = 2;
@@ -89,7 +90,7 @@
             this.tile4_B.FlatAppearance.BorderSize = 0;
             this.tile4_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tile4_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile4_B.Location = new System.Drawing.Point(348, 322);
+            this.tile4_B.Location = new System.Drawing.Point(516, 322);
             this.tile4_B.Name = "tile4_B";
             this.tile4_B.Size = new System.Drawing.Size(129, 116);
             this.tile4_B.TabIndex = 4;
@@ -103,7 +104,7 @@
             this.tile3_B.FlatAppearance.BorderSize = 0;
             this.tile3_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tile3_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile3_B.Location = new System.Drawing.Point(236, 322);
+            this.tile3_B.Location = new System.Drawing.Point(404, 322);
             this.tile3_B.Name = "tile3_B";
             this.tile3_B.Size = new System.Drawing.Size(129, 116);
             this.tile3_B.TabIndex = 3;
@@ -117,7 +118,7 @@
             this.tile7_B.FlatAppearance.BorderSize = 0;
             this.tile7_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tile7_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile7_B.Location = new System.Drawing.Point(684, 322);
+            this.tile7_B.Location = new System.Drawing.Point(852, 322);
             this.tile7_B.Name = "tile7_B";
             this.tile7_B.Size = new System.Drawing.Size(129, 116);
             this.tile7_B.TabIndex = 7;
@@ -131,7 +132,7 @@
             this.tile6_B.FlatAppearance.BorderSize = 0;
             this.tile6_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tile6_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile6_B.Location = new System.Drawing.Point(572, 322);
+            this.tile6_B.Location = new System.Drawing.Point(740, 322);
             this.tile6_B.Name = "tile6_B";
             this.tile6_B.Size = new System.Drawing.Size(129, 116);
             this.tile6_B.TabIndex = 6;
@@ -145,7 +146,7 @@
             this.tile5_B.FlatAppearance.BorderSize = 0;
             this.tile5_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tile5_B.Font = new System.Drawing.Font("Segoe UI", 60F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tile5_B.Location = new System.Drawing.Point(460, 322);
+            this.tile5_B.Location = new System.Drawing.Point(628, 322);
             this.tile5_B.Name = "tile5_B";
             this.tile5_B.Size = new System.Drawing.Size(129, 116);
             this.tile5_B.TabIndex = 5;
@@ -156,7 +157,7 @@
             // 
             this.ip_L.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ip_L.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ip_L.Location = new System.Drawing.Point(657, 9);
+            this.ip_L.Location = new System.Drawing.Point(994, 9);
             this.ip_L.MinimumSize = new System.Drawing.Size(100, 0);
             this.ip_L.Name = "ip_L";
             this.ip_L.Size = new System.Drawing.Size(131, 22);
@@ -166,7 +167,7 @@
             // 
             this.ipText_L.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ipText_L.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ipText_L.Location = new System.Drawing.Point(476, 9);
+            this.ipText_L.Location = new System.Drawing.Point(813, 9);
             this.ipText_L.MinimumSize = new System.Drawing.Size(100, 0);
             this.ipText_L.Name = "ipText_L";
             this.ipText_L.Size = new System.Drawing.Size(175, 22);
@@ -184,11 +185,47 @@
             this.playerNum_L.TabIndex = 11;
             this.playerNum_L.Text = "Player 1";
             // 
+            // player2tiles_L
+            // 
+            this.player2tiles_L.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.player2tiles_L.AutoSize = true;
+            this.player2tiles_L.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.player2tiles_L.Location = new System.Drawing.Point(530, 17);
+            this.player2tiles_L.Name = "player2tiles_L";
+            this.player2tiles_L.Size = new System.Drawing.Size(115, 21);
+            this.player2tiles_L.TabIndex = 12;
+            this.player2tiles_L.Text = "🁢🁢🁢🁢🁢🁢🁢";
+            // 
+            // player3tiles_L
+            // 
+            this.player3tiles_L.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.player3tiles_L.AutoSize = true;
+            this.player3tiles_L.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.player3tiles_L.Location = new System.Drawing.Point(1010, 172);
+            this.player3tiles_L.Name = "player3tiles_L";
+            this.player3tiles_L.Size = new System.Drawing.Size(115, 21);
+            this.player3tiles_L.TabIndex = 13;
+            this.player3tiles_L.Text = "🁢🁢🁢🁢🁢🁢🁢";
+            // 
+            // player1tiles_L
+            // 
+            this.player1tiles_L.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.player1tiles_L.AutoSize = true;
+            this.player1tiles_L.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.player1tiles_L.Location = new System.Drawing.Point(12, 172);
+            this.player1tiles_L.Name = "player1tiles_L";
+            this.player1tiles_L.Size = new System.Drawing.Size(115, 21);
+            this.player1tiles_L.TabIndex = 14;
+            this.player1tiles_L.Text = "🁢🁢🁢🁢🁢🁢🁢";
+            // 
             // Client
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1137, 450);
+            this.Controls.Add(this.player1tiles_L);
+            this.Controls.Add(this.player3tiles_L);
+            this.Controls.Add(this.player2tiles_L);
             this.Controls.Add(this.playerNum_L);
             this.Controls.Add(this.ipText_L);
             this.Controls.Add(this.ip_L);
@@ -221,5 +258,8 @@
         public Label ip_L;
         public Label ipText_L;
         public Label playerNum_L;
+        private Label player2tiles_L;
+        private Label player3tiles_L;
+        private Label player1tiles_L;
     }
 }
