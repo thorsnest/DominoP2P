@@ -6,13 +6,16 @@ using System.Net;
 using Microsoft.AspNetCore.Builder;
 using System.Diagnostics;
 using DominoForm.Model;
-using System.Windows.Forms;
 
 namespace DominoForm.Controller
 {
     /*TODO
      * - Detectar quien ha ganado.
-     * - Lidiar problema de fichas que desaparecen
+     *  · Cuando uno de los numeros de fichas llegue a 0
+     *  · Cuando no se puedan jugar mas fichas.
+     * - Mostrar de quien es el turno (poniendo sus fichas en rojo)
+     * - Retoques a la vista
+     * - Optimizar código
      */
     internal class Controller_AllTiles
     {
@@ -20,6 +23,7 @@ namespace DominoForm.Controller
         string[,] tiles;                                                //La lista con todas las fichas del juego
         string[,] pile;                                                 //La lista con todas las fichas del juego
         Button[] hand;                                                  //La mano del jugador
+        int[] playersHand = new int[4];                                 //Cantidad de fichas en cada jugador
         int leftTile = 6;                                               //El valor aceptado del lado izquierdo del tablero
         int rightTile = 6;                                              //El valor aceptado del lado derecho del tablero
         WebApplication wsHost;                                          //Websocket Host
@@ -88,6 +92,7 @@ namespace DominoForm.Controller
             wsHost.MapGet("/host", async context =>
             {
                 string prevMsg = "";
+                List<string> playsLog = new List<string>();
                 var rcvBytes = new byte[256];
                 var rcvBuffer = new ArraySegment<byte>(rcvBytes);
                 if (context.WebSockets.IsWebSocketRequest)
@@ -141,6 +146,14 @@ namespace DominoForm.Controller
                                         if (prevMsg.Length < rcvMsg.Length || rcvMsg.StartsWith("Start"))
                                         {
                                             rcvMsg += turn % 4;
+                                            Debug.WriteLine(rcvMsg);
+                                            foreach (string play in playsLog){
+                                                if (play.Equals(rcvMsg))
+                                                {
+                                                    Debug.WriteLine("S'ha acabat!");
+                                                }
+                                            }
+                                            playsLog.Add(rcvMsg);
                                             turn++;
                                             foreach (Player player in players)
                                             {
@@ -245,7 +258,6 @@ namespace DominoForm.Controller
                             byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(result.Count).ToArray();
                             string rcvMsg = Encoding.UTF8.GetString(msgBytes);
                             var resultText = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                            Debug.WriteLine(rcvMsg);
                             Control.CheckForIllegalCrossThreadCalls = false;
                             int tempPlayerOrder;
                             if (!int.TryParse(rcvMsg, out tempPlayerOrder))
@@ -269,15 +281,42 @@ namespace DominoForm.Controller
                                 }
                                 else
                                 {
-                                    /* Exemple resposta: 🁓🂓460
+                                    /* Exemple resposta: 🁓🂓6677460
                                      * La resposta está estructurada de la següent manera:
                                      * - "🁓🂓" és el tauler actual, que es mostrarà al Label "tauler"
+                                     * - "6677" son les fitxes que li queden a cada jugador
                                      * - "4" és el valor del tauler per l'esquerra
                                      * - "6" és el valor del tauler per la dreta
                                      * - 0 és el jugador a qui li toca
                                     */
 
-                                    f.tauler.Text = rcvMsg[..^3];
+                                    f.tauler.Text = rcvMsg[..^7];
+                                    switch (yourTurn) {
+                                        case 0:
+                                            f.player1tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 6, 1))));
+                                            f.player2tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 5, 1))));
+                                            f.player3tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 4, 1))));
+                                            break;
+                                        case 1:
+                                            f.player1tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 5, 1))));
+                                            f.player2tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 4, 1))));
+                                            f.player3tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 7, 1))));
+                                            break;
+                                        case 2:
+                                            f.player1tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 4, 1))));
+                                            f.player2tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 7, 1))));
+                                            f.player3tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 6, 1))));
+                                            break;
+                                        case 3:
+                                            f.player1tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 7, 1))));
+                                            f.player2tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 6, 1))));
+                                            f.player3tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 5, 1))));
+                                            break;
+                                    }
+                                    for(int i = 0; i < playersHand.Length; i++)
+                                    {
+                                        playersHand[i] = int.Parse(rcvMsg.Substring(rcvMsg.Length - 7 + i, 1));
+                                    }
                                     leftTile = int.Parse(rcvMsg.Substring(rcvMsg.Length - 3, 1));
                                     rightTile = int.Parse(rcvMsg.Substring(rcvMsg.Length - 2, 1));
                                     if (yourTurn == (int.Parse(rcvMsg.Substring(rcvMsg.Length - 1, 1)) + 1) % 4)
@@ -414,7 +453,23 @@ namespace DominoForm.Controller
             string missatge = "";
             if (button.Text == tiles[6, 6])
             {
-                missatge = tiles[6, 6] + 6 + 6;
+                missatge = tiles[6, 6];
+                switch (yourTurn)
+                {
+                    case 0:
+                        missatge += "6777";
+                        break;
+                    case 1:
+                        missatge += "7677";
+                        break;
+                    case 2:
+                        missatge += "7767";
+                        break;
+                    case 3:
+                        missatge += "7776";
+                        break;
+                }
+                missatge += "66";
                 byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
                 var sendBuffer = new ArraySegment<byte>(sendBytes);
                 await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
@@ -427,7 +482,13 @@ namespace DominoForm.Controller
                     for (int i = 0; i < 7; i++)
                         if (tiles[leftTile, i].Equals(button.Text) || tiles[i, leftTile].Equals(button.Text))
                         {
-                            missatge = tiles[i, leftTile] + f.tauler.Text + i + rightTile;
+                            missatge = tiles[i, leftTile] + f.tauler.Text;
+                            for (int j = 0; j < playersHand.Length; j++)
+                            {
+                                if (yourTurn == j) playersHand[j]--;
+                                missatge += playersHand[j];
+                            }
+                            missatge += i.ToString() + rightTile.ToString();
                             byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
                             var sendBuffer = new ArraySegment<byte>(sendBytes);
                             await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
@@ -443,7 +504,12 @@ namespace DominoForm.Controller
                     for (int i = 0; i < 7; i++)
                         if (tiles[rightTile, i].Equals(button.Text) || tiles[i, rightTile].Equals(button.Text))
                         {
-                            missatge = f.tauler.Text + tiles[rightTile, i] + leftTile + i;
+                            missatge = f.tauler.Text + tiles[rightTile, i];
+                            for (int j = 0; j < playersHand.Length; j++) {
+                                if (yourTurn == j) playersHand[j]--;
+                                missatge += playersHand[j];
+                            }
+                            missatge += leftTile.ToString() + i.ToString();
                             byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
                             var sendBuffer = new ArraySegment<byte>(sendBytes);
                             await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
@@ -479,7 +545,12 @@ namespace DominoForm.Controller
         //Métode que pasa torn
         private async void SkipTurn()
         {
-            string? missatge = f.tauler.Text + leftTile + rightTile;
+            string? missatge = f.tauler.Text;
+            for (int j = 0; j < playersHand.Length; j++)
+            {
+                missatge += playersHand[j];
+            }
+            missatge += leftTile.ToString() + rightTile.ToString();
             byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
             var sendBuffer = new ArraySegment<byte>(sendBytes);
             await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);

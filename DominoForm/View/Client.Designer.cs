@@ -258,8 +258,8 @@
         public Label ip_L;
         public Label ipText_L;
         public Label playerNum_L;
-        private Label player2tiles_L;
-        private Label player3tiles_L;
-        private Label player1tiles_L;
+        public Label player2tiles_L;
+        public Label player3tiles_L;
+        public Label player1tiles_L;
     }
 }
