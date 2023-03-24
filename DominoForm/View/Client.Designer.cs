@@ -245,7 +245,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::DominoForm.Properties.Resources.Wood;
+            this.BackgroundImage = global::DominoForm.Properties.Resources.Wood1;
             this.ClientSize = new System.Drawing.Size(1137, 450);
             this.Controls.Add(this.player1tiles_L);
             this.Controls.Add(this.player3tiles_L);

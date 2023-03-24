@@ -39,7 +39,7 @@
             this.connect_B.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.connect_B.BackColor = System.Drawing.Color.Transparent;
-            this.connect_B.BackgroundImage = global::DominoForm.Properties.Resources.domino_tile_1;
+            this.connect_B.BackgroundImage = global::DominoForm.Properties.Resources.domino_tile_11;
             this.connect_B.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.connect_B.FlatAppearance.BorderSize = 0;
             this.connect_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -56,7 +56,7 @@
             this.host_B.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.host_B.BackColor = System.Drawing.Color.Transparent;
-            this.host_B.BackgroundImage = global::DominoForm.Properties.Resources.domino_tile_1;
+            this.host_B.BackgroundImage = global::DominoForm.Properties.Resources.domino_tile_11;
             this.host_B.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.host_B.FlatAppearance.BorderSize = 0;
             this.host_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -73,7 +73,7 @@
             this.exit_B.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.exit_B.BackColor = System.Drawing.Color.Transparent;
-            this.exit_B.BackgroundImage = global::DominoForm.Properties.Resources.domino_tile_1;
+            this.exit_B.BackgroundImage = global::DominoForm.Properties.Resources.domino_tile_11;
             this.exit_B.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.exit_B.FlatAppearance.BorderSize = 0;
             this.exit_B.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
