@@ -27,7 +27,7 @@ namespace DominoForm.Controller
         string[,] pile;                                                 //La lista con todas las fichas jugándose
         Button[] hand;                                                  //La mano del jugador
         int[] playersHand = new int[4];                                 //Cantidad de fichas en cada jugador
-        int[] playersPoints = new int[4];
+        int[] playersPoints = new int[4];                               //Cantidad de puntos de cada jugador
         int leftTile = 6;                                               //El valor aceptado del lado izquierdo del tablero
         int rightTile = 6;                                              //El valor aceptado del lado derecho del tablero
         WebApplication wsHost;                                          //Websocket Host
@@ -38,6 +38,8 @@ namespace DominoForm.Controller
         int playerNum;                                                  //Número de cada jugador para el servidor
         int yourTurn = -1;                                              //Número del turno del cliente
         int turn;                                                       //Número del turno actual de la partida
+        int smallFont = 50;
+        int bigFont = 60;
 
         public Controller_AllTiles(bool isHost, string? ip)
         {
@@ -330,13 +332,17 @@ namespace DominoForm.Controller
                                 }
                                 else if (rcvMsg.StartsWith("P"))
                                 {
+                                    f.yourTurn_L.Visible = false;
                                     f.tauler.Text = rcvMsg;
                                     if (rcvMsg.EndsWith("0"))
                                     {
-                                        f.tauler.Text = "";
+                                        f.tauler.Text = "Start!";
                                         DisableHand6();
                                     }
-                                    else DisableHand();
+                                    else
+                                    {
+                                        DisableHand();
+                                    }
                                 }
                                 else if (rcvMsg.StartsWith("D"))
                                 {
@@ -390,11 +396,39 @@ namespace DominoForm.Controller
                                     }
                                     leftTile = int.Parse(rcvMsg.Substring(rcvMsg.Length - 3, 1));
                                     rightTile = int.Parse(rcvMsg.Substring(rcvMsg.Length - 2, 1));
-                                    if (yourTurn == (int.Parse(rcvMsg.Substring(rcvMsg.Length - 1, 1)) + 1) % 4)
+                                    int playerTurn = (int.Parse(rcvMsg.Substring(rcvMsg.Length - 1, 1)) + 1) % 4;
+                                    if (yourTurn ==  playerTurn)
                                     {
                                         EnableHand();
+                                        f.yourTurn_L.Visible = true;
+                                        f.Activate();
+                                        f.player1tiles_L.ForeColor = Color.Black;
+                                        f.player2tiles_L.ForeColor = Color.Black;
+                                        f.player3tiles_L.ForeColor = Color.Black;
                                     }
-                                    else DisableHand();
+                                    else
+                                    {
+                                        DisableHand();
+                                        f.yourTurn_L.Visible = false;
+                                        if (yourTurn == (playerTurn + 1) % 4)
+                                        {
+                                            f.player1tiles_L.ForeColor = Color.Black;
+                                            f.player2tiles_L.ForeColor = Color.Black;
+                                            f.player3tiles_L.ForeColor = Color.RebeccaPurple;
+                                        }
+                                        else if (yourTurn == (playerTurn + 2) % 4)
+                                        {
+                                            f.player1tiles_L.ForeColor = Color.Black;
+                                            f.player2tiles_L.ForeColor = Color.RebeccaPurple;
+                                            f.player3tiles_L.ForeColor = Color.Black;
+                                        }
+                                        else
+                                        {
+                                            f.player1tiles_L.ForeColor = Color.RebeccaPurple;
+                                            f.player2tiles_L.ForeColor = Color.Black;
+                                            f.player3tiles_L.ForeColor = Color.Black;
+                                        }
+                                    }
                                 }
                             }
                             else
@@ -435,10 +469,10 @@ namespace DominoForm.Controller
         //Métode de configuració principal que crida a totes les configuracions inicials
         private void Setup()
         {
+            f.ipText_L.Text = "IP Adress:";
             tiles = SetupTiles();
             pile = SetupTiles();
             hand = f.Controls.OfType<Button>().ToArray();
-            //SetupButtons();
             InitListeners();
         }
 
@@ -472,30 +506,14 @@ namespace DominoForm.Controller
             return tiles;
         }
 
-        //Configura els 7 botons donan-lis a cadascún una caràcter de fitxa aleatori i el treu de l'array.
+        //Configura els 7 botons donan-lis a cadascún una caràcter dels 7 caràcters retornats.
         private void SetupButtons(string rcvMsg)
         {
-            //Random r = new Random();
-            //string[] hand = new string[7];
             int i = 0;
             foreach (Button button in hand)
             {
                 button.MouseDown += Button_MouseDown;
                 button.Text = rcvMsg.Substring(i, 2);
-                /*
-                bool placed = false;
-                while (!placed)
-                {
-                    int x = r.Next(7);
-                    int y = r.Next(7);
-                    if (pile[x, y] != "")
-                    {
-                        button.Text = tiles[x, y];
-                        pile[x, y] = "";
-                        pile[y, x] = "";
-                        placed = true;
-                    }
-                }*/
                 i += 2;
             }
         }
@@ -509,7 +527,10 @@ namespace DominoForm.Controller
         //´Métode que canvia el tamany del tauler dinàmicament segons la mida de la finestra
         private void F_SizeChanged(object? sender, EventArgs e)
         {
-            f.tauler.Font = new Font(f.tauler.Font.Name, (23 * f.tauler.Width) / 842);
+            if (f.Size.Width > f.MinimumSize.Width)
+            {
+                f.tauler.Font = new Font(f.tauler.Font.Name, (30 * f.tauler.Width) / 1021);
+            }
         }
 
         private void Button_MouseDown(object? sender, MouseEventArgs e)
@@ -622,14 +643,17 @@ namespace DominoForm.Controller
         private void EnableHand()
         {
             bool cantPlay = true;
-            bool invisible = true;
             foreach (Button button in hand)
             {
                 if (button.Visible)
                 {
-                    invisible = false;
                     button.Enabled = CheckPlaceableTile(button);
-                    if (button.Enabled) cantPlay = false;
+                    if (button.Enabled)
+                    {
+                        button.Font = new Font(button.Font.Name, bigFont);
+                        cantPlay = false;
+                    }
+                    else button.Font = new Font(button.Font.Name, smallFont);
                 }
             }
             if (cantPlay)
@@ -658,6 +682,7 @@ namespace DominoForm.Controller
             foreach (Button button in hand)
             {
                 button.Enabled = false;
+                button.Font = new Font(button.Font.Name, smallFont);
             }
         }
 
@@ -665,7 +690,14 @@ namespace DominoForm.Controller
         {
             foreach (Button button in hand)
             {
+                button.Font = new Font(button.Font.Name, smallFont);
                 button.Enabled = button.Text == tiles[6, 6];
+                if (button.Enabled)
+                {
+                    button.Font = new Font(button.Font.Name, 60);
+                    f.yourTurn_L.Visible = true;
+                }
+                f.yourTurn_L.Text = "Your turn";
             }
 
         }
