@@ -6,18 +6,10 @@ using System.Net;
 using Microsoft.AspNetCore.Builder;
 using System.Diagnostics;
 using DominoForm.Model;
-using System.Numerics;
-using System.Windows.Forms;
-using System.Reflection;
 
 namespace DominoForm.Controller
 {
     /*TODO
-     * - Detectar quien ha ganado.
-     *  · Cuando uno de los numeros de fichas llegue a 0
-     *  · Cuando no se puedan jugar mas fichas.
-     * - Mostrar de quien es el turno (poniendo sus fichas en rojo)
-     * - Retoques a la vista
      * - Optimizar código
      */
     internal class Controller_AllTiles
@@ -38,7 +30,7 @@ namespace DominoForm.Controller
         int playerNum;                                                  //Número de cada jugador para el servidor
         int yourTurn = -1;                                              //Número del turno del cliente
         int turn;                                                       //Número del turno actual de la partida
-        int smallFont = 50;
+        int smallFont = 40;
         int bigFont = 60;
 
         public Controller_AllTiles(bool isHost, string? ip)
@@ -193,7 +185,6 @@ namespace DominoForm.Controller
                                         //En canvi si es una jugada normal, al missatge se li afegeix el torn de la partida per saber a quin jugador li toca, la variable augmenta i es retornen les dades a tots els jugadors
                                         if (prevMsg.Length-1 <= rcvMsg.Length && !end)
                                         {
-                                            Debug.WriteLine(rcvMsg);
                                             foreach (string play in playsLog){
                                                 if (play.Equals(rcvMsg))
                                                 {
@@ -368,35 +359,37 @@ namespace DominoForm.Controller
                                     */
 
                                     f.tauler.Text = rcvMsg[..^7];
+                                    int[] ind = null;
                                     switch (yourTurn) {
                                         case 0:
-                                            f.player1tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 6, 1))));
-                                            f.player2tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 5, 1))));
-                                            f.player3tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 4, 1))));
+                                            ind = new int[] {6, 5, 4};
                                             break;
                                         case 1:
-                                            f.player1tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 5, 1))));
-                                            f.player2tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 4, 1))));
-                                            f.player3tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 7, 1))));
+                                            ind = new int[] {5, 4, 7};
                                             break;
                                         case 2:
-                                            f.player1tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 4, 1))));
-                                            f.player2tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 7, 1))));
-                                            f.player3tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 6, 1))));
+                                            ind = new int[] {4, 7, 6};
                                             break;
                                         case 3:
-                                            f.player1tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 7, 1))));
-                                            f.player2tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 6, 1))));
-                                            f.player3tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", int.Parse(rcvMsg.Substring(rcvMsg.Length - 5, 1))));
+                                            ind = new int[] {7, 6, 5};
                                             break;
                                     }
-                                    for(int i = 0; i < playersHand.Length; i++)
+
+                                    int[] nTiles = ind!.Select(i => int.Parse(rcvMsg.Substring(rcvMsg.Length - i, 1))).ToArray();
+
+                                    f.player1tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", nTiles[0]));
+                                    f.player2tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", nTiles[1]));
+                                    f.player3tiles_L.Text = string.Concat(Enumerable.Repeat("🁢", nTiles[2]));
+
+                                    for (int i = 0; i < playersHand.Length; i++)
                                     {
                                         playersHand[i] = int.Parse(rcvMsg.Substring(rcvMsg.Length - 7 + i, 1));
                                     }
+
                                     leftTile = int.Parse(rcvMsg.Substring(rcvMsg.Length - 3, 1));
                                     rightTile = int.Parse(rcvMsg.Substring(rcvMsg.Length - 2, 1));
                                     int playerTurn = (int.Parse(rcvMsg.Substring(rcvMsg.Length - 1, 1)) + 1) % 4;
+
                                     if (yourTurn ==  playerTurn)
                                     {
                                         EnableHand();
@@ -410,6 +403,9 @@ namespace DominoForm.Controller
                                     {
                                         DisableHand();
                                         f.yourTurn_L.Visible = false;
+
+                                        Color[] colors = new Color[] {Color.Aquamarine, Color.Black, Color.Black, Color.Black};
+
                                         if (yourTurn == (playerTurn + 1) % 4)
                                         {
                                             f.player1tiles_L.ForeColor = Color.Black;
@@ -513,6 +509,7 @@ namespace DominoForm.Controller
             foreach (Button button in hand)
             {
                 button.MouseDown += Button_MouseDown;
+                button.TabStop = false;
                 button.Text = rcvMsg.Substring(i, 2);
                 i += 2;
             }
@@ -529,7 +526,7 @@ namespace DominoForm.Controller
         {
             if (f.Size.Width > f.MinimumSize.Width)
             {
-                f.tauler.Font = new Font(f.tauler.Font.Name, (30 * f.tauler.Width) / 1021);
+                f.tauler.Font = new Font(f.tauler.Font.Name, (47 * f.tauler.Width) / 1021);
             }
         }
 
@@ -567,7 +564,7 @@ namespace DominoForm.Controller
         //Métode que comproba si la fitxa clicada pot ser col·locada i la col·loca
         private async void PlaceTile(Button button, bool left)
         {
-            string missatge = "";
+            string missatge;
             if (button.Text == tiles[6, 6])
             {
                 missatge = tiles[6, 6];
@@ -609,7 +606,6 @@ namespace DominoForm.Controller
                             byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
                             var sendBuffer = new ArraySegment<byte>(sendBytes);
                             await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
-                            // f.tauler.Text = tiles[i, leftTile] + f.tauler.Text;
 
                             leftTile = i;
                             button.Visible = false;
@@ -630,7 +626,6 @@ namespace DominoForm.Controller
                             byte[] sendBytes = Encoding.UTF8.GetBytes(missatge);
                             var sendBuffer = new ArraySegment<byte>(sendBytes);
                             await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: cts.Token);
-                            // f.tauler.Text += tiles[rightTile, i];
                             rightTile = i;
                             button.Visible = false;
                             break;

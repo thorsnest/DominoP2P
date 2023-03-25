@@ -16,10 +16,5 @@ namespace DominoForm.View
         {
             InitializeComponent();
         }
-
-        private void Menu_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }

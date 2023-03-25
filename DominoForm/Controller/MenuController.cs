@@ -30,9 +30,12 @@ namespace DominoForm.Controller
 
         private void InitListeners()
         {
-            menu.connect_B.Click += ConnectButton_Click;
+            menu.join_B.Click += ConnectButton_Click;
+            menu.join_PB.Click += ConnectButton_Click;
             menu.host_B.Click += HostButton_Click;
+            menu.host_PB.Click += HostButton_Click;
             menu.exit_B.Click += ExitButton_Click;
+            menu.exit_PB.Click += ExitButton_Click;
         }
 
         private void ExitButton_Click(object? sender, EventArgs e)

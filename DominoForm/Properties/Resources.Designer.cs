@@ -63,9 +63,9 @@ namespace DominoForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Domino_pizza_logo {
+        internal static System.Drawing.Bitmap domino_title_image {
             get {
-                object obj = ResourceManager.GetObject("Domino_pizza_logo", resourceCulture);
+                object obj = ResourceManager.GetObject("domino_title_image", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace DominoForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap domino_tile_1 {
+        internal static System.Drawing.Bitmap exit {
             get {
-                object obj = ResourceManager.GetObject("domino_tile_1", resourceCulture);
+                object obj = ResourceManager.GetObject("exit", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace DominoForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap domino_tile_11 {
+        internal static System.Drawing.Bitmap host {
             get {
-                object obj = ResourceManager.GetObject("domino_tile_11", resourceCulture);
+                object obj = ResourceManager.GetObject("host", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,19 +93,9 @@ namespace DominoForm.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Wood {
+        internal static System.Drawing.Bitmap Wood11 {
             get {
-                object obj = ResourceManager.GetObject("Wood", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Wood1 {
-            get {
-                object obj = ResourceManager.GetObject("Wood1", resourceCulture);
+                object obj = ResourceManager.GetObject("Wood11", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
