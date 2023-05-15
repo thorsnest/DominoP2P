@@ -1,6 +1,6 @@
 
 <img src="Dominoes-Game-PNG-HD-Image-428892715.png">
-<span style="color:Black;font-weight:700;font-size:50px">  Domino Online</span>
+# Domino Online
 
 ---
 <br>
