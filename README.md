@@ -6,7 +6,7 @@
 <br>
 
 # Index
-- [Index](#index)
+- [Introducció](#Introducció)
 - [Controladors](#controladors)
   - [Menú](#menú)
   - [Servidor](#servidor)
@@ -19,6 +19,10 @@
   - [Tauler de la partida](#tauler-de-la-partida)
 - [Model](#model)
   - [Jugador](#jugador)
+
+# Introducció
+
+Aquest Domino Online és per exclusivament 4 jugadors, i funciona amb P2P (peer-to-peer), per tant no necessita d'un servidor aliè, només cal que una persona allotji la partida i comparteixi la seva direcció IP amb la resta de jugadors.
 
 # Controladors
 
